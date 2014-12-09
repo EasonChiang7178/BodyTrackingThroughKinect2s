@@ -13,8 +13,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using Patterns.Singleton;
-
 namespace Kinect2.MultiKinect2BodyTracking.Client
 {
     /// <summary>
@@ -24,9 +22,9 @@ namespace Kinect2.MultiKinect2BodyTracking.Client
     {
         public MainWindow()
         {
+            KinectSensor kinectSensor = KinectSensor.Instance;
+                // initialize the components (controls) of the window
             InitializeComponent();
-
-            Kinect2 t = Kinect2.Instance;
         }
     }
 }
