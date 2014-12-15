@@ -17,7 +17,6 @@ C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect
 C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Client\bin\Debug\Multi-Kinect2BodyTracking_Client.pdb
 C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Client\bin\Debug\Microsoft.Kinect.dll
 C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Client\bin\Debug\Microsoft.Kinect.xml
-C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Client\obj\Debug\Multi-Kinect2BodyTracking_Client.csprojResolveAssemblyReference.cache
 C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Client\obj\Debug\MainWindow.baml
 C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Client\obj\Debug\MainWindow.g.cs
 C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Client\obj\Debug\App.g.cs

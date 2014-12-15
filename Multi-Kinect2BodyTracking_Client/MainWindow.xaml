@@ -1,8 +1,12 @@
 ﻿<Window x:Class="Kinect2.MultiKinect2BodyTracking.Client.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Multi-Kinect2 Human Tracking Client" 
+        Height="600" Width="700" 
+        Closing="MainWindow_Closing">
     <Grid>
-        
+        <Viewbox HorizontalAlignment="Center" Margin="347,10,346.6,10.4">
+            <Image Source="{Binding ColorImageSource}" Stretch="UniformToFill" />
+        </Viewbox>
     </Grid>
 </Window>
