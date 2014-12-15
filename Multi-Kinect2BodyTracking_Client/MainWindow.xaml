@@ -6,7 +6,7 @@
         Closing="MainWindow_Closing">
     <Grid>
         <Viewbox HorizontalAlignment="Center" Margin="347,10,346.6,10.4">
-            <Image Source="{Binding ColorImageSource}" Stretch="UniformToFill" />
+            <Image Source="{Binding ColorSource}" Stretch="UniformToFill" />
         </Viewbox>
     </Grid>
 </Window>
