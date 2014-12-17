@@ -24,7 +24,7 @@ namespace Kinect2.Streams
         /// <summary>
         /// Identification for the stream
         /// </summary>
-        public override string streamID {
+        public override string StreamID {
             get { return "ColorStream"; }
         }
 
@@ -43,7 +43,7 @@ namespace Kinect2.Streams
         /// <summary>
         /// Start to retrieve the frame
         /// </summary>
-        public override void OpenStream() {
+        public override void Open() {
                 // Open the reader for the color frames
             this.colorFrameReader = this.sensor.ColorFrameSource.OpenReader();
                 // Wire handler for frame arrival

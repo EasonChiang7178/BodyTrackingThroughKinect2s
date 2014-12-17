@@ -14,6 +14,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using Kinect2.Streams;
+
 namespace Kinect2.MultiKinect2BodyTracking.Client
 {
     /// <summary>
@@ -30,7 +32,7 @@ namespace Kinect2.MultiKinect2BodyTracking.Client
         #region Properties
 
         public ImageSource ColorImageSource {
-            get { return this.kinectSensor.ColorSource; }
+            get { return this.kinectSensor["ColorStream"]; }
         }
 
         #endregion
@@ -42,7 +44,7 @@ namespace Kinect2.MultiKinect2BodyTracking.Client
             /* Open the Kinect sensor */
             kinectSensor = KinectSensor.Instance;
                 // Initialize the stream we interested
-            kinectSensor.InitializeColorStream();
+            kinectSensor.AddStream<ColorStream>();
                 // Run Kinect!
             kinectSensor.Open();
 

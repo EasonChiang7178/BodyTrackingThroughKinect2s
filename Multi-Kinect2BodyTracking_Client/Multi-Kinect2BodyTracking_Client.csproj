@@ -64,6 +64,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Kinect2\Exceptions\Exceptions.cs" />
     <Compile Include="Kinect2\Streams\ColorStream.cs" />
     <Compile Include="Kinect2\KinectSensor.cs" />
     <Compile Include="Kinect2\Streams\SourceStream.cs" />

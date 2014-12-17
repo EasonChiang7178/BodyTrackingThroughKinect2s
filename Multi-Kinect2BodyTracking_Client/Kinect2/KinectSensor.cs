@@ -7,6 +7,7 @@ using System.Windows.Media.Imaging;
 using Microsoft.Kinect;
 
 using Kinect2.Streams;
+using Kinect2.Exceptions;
 
 //-- Design Patterns --//
 using Patterns.Singleton;
@@ -25,28 +26,19 @@ namespace Kinect2
         /// <summary>
         /// A dictionary used to store the opened stream. Key is the ID of the stream, and the value is the stream itself 
         /// </summary>
-        protected Dictionary<string, SourceStream> openedStreams = new Dictionary<string, SourceStream>();
-
-        //===== COLOR STREAM =====//
-        private ColorStream colorStream = null;
-
-        //===== INFRARED STREAM =====//
-
-        //===== DEPTH STREAM =====//
-
-        //===== BODY STREAM =====//
-
-        //===== BODY INDEX STREAM =====//
+        protected Dictionary<string, ImageStream> openedStreams = new Dictionary<string, ImageStream>();
 
         #endregion
 
         #region Properties
 
-        /// <summary>
-        /// Gets the color bitmap to display
-        /// </summary>
-        public ImageSource ColorSource {
-            get { return this.colorStream.imageSource; }
+        public ImageSource this[string streamName] {
+            get {
+                if (openedStreams.ContainsKey(streamName) == true)
+                    return openedStreams[streamName].imageSource;
+
+                throw new StreamHasNotBeenOpened(streamName);
+            }
         }
 
         #endregion
@@ -67,12 +59,13 @@ namespace Kinect2
         }
 
         /// <summary>
-        /// Active the reader for obtaining the color image
+        /// Active the specific stream to obtain the image
         /// </summary>
-        public void InitializeColorStream() {
-            if (colorStream == null)
-                colorStream = new ColorStream(this.sensor);
-            this.colorStream.OpenStream();
+        public void AddStream< T >() where T : ImageStream {
+            ImageStream newStream = (T) Activator.CreateInstance(typeof(T), new object[] { sensor });
+            newStream.Open();
+
+            openedStreams.Add(newStream.StreamID, newStream);
         }
 
         //==============================================//
@@ -89,8 +82,10 @@ namespace Kinect2
         /// Base dipose method for inheritance using
         /// </summary>
         protected virtual void CloseManagedResource() {
-            if (colorStream != null)    this.colorStream.Dispose();
-            
+            /* Releasing all the opened streams */
+            foreach (KeyValuePair<string, ImageStream> stream in openedStreams)
+                stream.Value.Dispose();
+
             sensor.Close();
         }
 

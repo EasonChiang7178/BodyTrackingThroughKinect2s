@@ -24,7 +24,7 @@ namespace Kinect2.Streams
         /// <summary>
         /// Identification for the stream
         /// </summary>
-        public abstract string streamID{
+        public abstract string StreamID{
             get;
         }
 
@@ -43,7 +43,7 @@ namespace Kinect2.Streams
         /// <summary>
         /// Start to retrieve the frame
         /// </summary>
-        abstract public void OpenStream();
+        abstract public void Open();
 
         //==============================================//
         //              Disposing Methods               //
