@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 //-- Using Kinect2 API --//
 using Microsoft.Kinect;
+
+using Kinect2.Streams;
 
 //-- Design Patterns --//
 using Patterns.Singleton;
@@ -19,52 +22,21 @@ namespace Kinect2
         /// </summary>
         protected Microsoft.Kinect.KinectSensor sensor = Microsoft.Kinect.KinectSensor.GetDefault();
 
+        /// <summary>
+        /// A dictionary used to store the opened stream. Key is the ID of the stream, and the value is the stream itself 
+        /// </summary>
+        protected Dictionary<string, SourceStream> openedStreams = new Dictionary<string, SourceStream>();
+
         //===== COLOR STREAM =====//
-        private ColorFrameOperator colorStream = null;
-
-        ///// <summary>
-        ///// Reader for color frames
-        ///// </summary>
-        //private Microsoft.Kinect.ColorFrameReader colorFrameReader = null;
-
-        ///// <summary>
-        ///// Bitmap to display
-        ///// </summary>
-        //private WriteableBitmap colorBitmap = null;
+        private ColorStream colorStream = null;
 
         //===== INFRARED STREAM =====//
-        /// <summary>
-        /// Reader for infrared frames
-        /// </summary>
-        private Microsoft.Kinect.InfraredFrameReader infraredFrameReader = null;
-
-        /// <summary>
-        /// Bitmap to display
-        /// </summary>
-        private WriteableBitmap infraredBitmap = null;
 
         //===== DEPTH STREAM =====//
-        /// <summary>
-        /// Reader for depth frames
-        /// </summary>
-        private Microsoft.Kinect.DepthFrameReader depthFrameReader = null;
-
-        /// <summary>
-        /// Bitmap to display
-        /// </summary>
-        private WriteableBitmap depthBitmap = null;
 
         //===== BODY STREAM =====//
-        /// <summary>
-        /// Reader for body frames
-        /// </summary>
-        private Microsoft.Kinect.BodyFrameReader bodyFrameReader = null;
 
         //===== BODY INDEX STREAM =====//
-        /// <summary>
-        /// Reader for body index frames
-        /// </summary>
-        private Microsoft.Kinect.BodyIndexFrameReader bodyindexFrameReader = null;
 
         #endregion
 
@@ -73,35 +45,8 @@ namespace Kinect2
         /// <summary>
         /// Gets the color bitmap to display
         /// </summary>
-        public ImageSource ColorSource
-        {
-            get
-            {
-                //return this.colorBitmap;
-                return this.colorStream.ColorSource;
-            }
-        }
-
-        /// <summary>
-        /// Gets the depth bitmap to display
-        /// </summary>
-        public ImageSource DepthSource
-        {
-            get
-            {
-                return this.depthBitmap;
-            }
-        }
-
-        /// <summary>
-        /// Gets the infrared bitmap to display
-        /// </summary>
-        public ImageSource InfraredSource
-        {
-            get
-            {
-                return this.infraredBitmap;
-            }
+        public ImageSource ColorSource {
+            get { return this.colorStream.imageSource; }
         }
 
         #endregion
@@ -111,7 +56,7 @@ namespace Kinect2
         /// <summary>
         /// Initializes a new Kinect2 instance of the <see cref="Singleton"/> class. (Constructor)
         /// </summary>
-        protected KinectSensor()
+        private KinectSensor()
         {}
 
         /// <summary>
@@ -121,9 +66,12 @@ namespace Kinect2
             sensor.Open();
         }
 
+        /// <summary>
+        /// Active the reader for obtaining the color image
+        /// </summary>
         public void InitializeColorStream() {
             if (colorStream == null)
-                colorStream = new ColorFrameOperator(this.sensor);
+                colorStream = new ColorStream(this.sensor);
             this.colorStream.OpenStream();
         }
 
@@ -141,11 +89,9 @@ namespace Kinect2
         /// Base dipose method for inheritance using
         /// </summary>
         protected virtual void CloseManagedResource() {
-            //this.bodyFrameReader.Dispose();
-            //this.colorFrameReader.Dispose();
-            this.colorStream.Dispose();
-            //this.depthFrameReader.Dispose();
-            //this.infraredFrameReader.Dispose();
+            if (colorStream != null)    this.colorStream.Dispose();
+            
+            sensor.Close();
         }
 
         /// <summary>

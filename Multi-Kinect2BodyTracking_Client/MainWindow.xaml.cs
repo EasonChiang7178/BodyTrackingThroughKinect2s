@@ -19,25 +19,37 @@ namespace Kinect2.MultiKinect2BodyTracking.Client
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, INotifyPropertyChanged
+    public partial class MainWindow : Window
     {
-        KinectSensor kinectSensor = null;
+        #region Members
 
-        public ImageSource ColorImageSource
-        {
-            get
-            {
-                return kinectSensor.ColorSource;
-            }
+        private KinectSensor kinectSensor = null;
+
+        #endregion 
+
+        #region Properties
+
+        public ImageSource ColorImageSource {
+            get { return this.kinectSensor.ColorSource; }
         }
+
+        #endregion
+
+        #region Methods
 
         public MainWindow()
         {
-                // Open the sensor
+            /* Open the Kinect sensor */
             kinectSensor = KinectSensor.Instance;
+                // Initialize the stream we interested
             kinectSensor.InitializeColorStream();
+                // Run Kinect!
             kinectSensor.Open();
-                // initialize the components (controls) of the window
+
+            /* GUI Initialization */
+                // Use the window object as the view model in this simple example
+            this.DataContext = this;
+                // Initialize the components (controls) of the window
             InitializeComponent();
         }
 
@@ -46,14 +58,15 @@ namespace Kinect2.MultiKinect2BodyTracking.Client
         /// </summary>
         /// <param name="sender">object sending the event</param>
         /// <param name="e">event arguments</param>
-        private void MainWindow_Closing(object sender, CancelEventArgs e)
-        {
+        private void MainWindow_Closing(object sender, CancelEventArgs e) {
             this.kinectSensor.Close();
         }
 
-        /// <summary>
-        /// INotifyPropertyChangedPropertyChanged event to allow window controls to bind to changeable data
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        ///// <summary>
+        ///// INotifyPropertyChangedPropertyChanged event to allow window controls to bind to changeable data
+        ///// </summary>
+        //public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion
     }
 }
