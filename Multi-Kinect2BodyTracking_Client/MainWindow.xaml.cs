@@ -31,7 +31,7 @@ namespace Kinect2.MultiKinect2BodyTracking.Client
 
         #region Properties
 
-        public ImageSource ColorImageSource {
+        public ImageSource ImageSource {
             get { return this.kinectSensor["ColorStream"]; }
         }
 

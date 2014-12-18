@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -67,6 +68,8 @@
     <Compile Include="Kinect2\Exceptions\Exceptions.cs" />
     <Compile Include="Kinect2\Streams\ColorStream.cs" />
     <Compile Include="Kinect2\KinectSensor.cs" />
+    <Compile Include="Kinect2\Streams\DepthStream.cs" />
+    <Compile Include="Kinect2\Streams\InfraredStream.cs" />
     <Compile Include="Kinect2\Streams\SourceStream.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

@@ -49,9 +49,9 @@ namespace Kinect2.Streams
                 // Wire handler for frame arrival
             this.colorFrameReader.FrameArrived += this.Reader_ColorFrameArrived;
                 // Create the colorFrameDescription from the ColorFrameSource using Bgra format
-            FrameDescription colorFrameDescription = this.sensor.ColorFrameSource.CreateFrameDescription(ColorImageFormat.Bgra);
+            this.frameDescription = this.sensor.ColorFrameSource.CreateFrameDescription(ColorImageFormat.Bgra);
                 // Create the bitmap to display
-            this.imageBitmap = new WriteableBitmap(colorFrameDescription.Width, colorFrameDescription.Height, 96.0, 96.0, PixelFormats.Bgr32, null);
+            this.imageBitmap = new WriteableBitmap(frameDescription.Width, frameDescription.Height, 96.0, 96.0, PixelFormats.Bgr32, null);
         }
 
         /// <summary>

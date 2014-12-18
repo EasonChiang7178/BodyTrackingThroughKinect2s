@@ -79,6 +79,11 @@ namespace Kinect2.Streams
         /// </summary>
         protected WriteableBitmap imageBitmap = null;
 
+        /// <summary>
+        /// Description of the data contained in the source frame
+        /// </summary>
+        protected FrameDescription frameDescription = null;
+
         #endregion
 
         #region Properties
