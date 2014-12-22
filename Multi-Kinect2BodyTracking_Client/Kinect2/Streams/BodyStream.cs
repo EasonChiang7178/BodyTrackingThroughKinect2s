@@ -137,7 +137,7 @@ namespace Kinect2.Streams
 
                     int penIndex = 0;
                     foreach (Body body in this.bodies) {
-                        Pen drawPen = this.bodyStructure.BodyColors[penIndex++];
+                        Pen drawPen = this.bodyStructure.bodyColors[penIndex++];
 
                         if (body.IsTracked) {
                             this.DrawClippedEdges(body, dc);
@@ -152,7 +152,7 @@ namespace Kinect2.Streams
                                 // clamp down to 0.1f to prevent coordinatemapper from returning (-Infinity, -Infinity)
                                 CameraSpacePoint position = joints[jointType].Position;
                                 if (position.Z < 0)
-                                    position.Z = this.bodyStructure.InferredZPositionClamp;
+                                    position.Z = this.bodyStructure.inferredZPositionClamp;
 
                                 DepthSpacePoint depthSpacePoint = this.coordinateMapper.MapCameraPointToDepthSpace(position);
                                 jointPoints[jointType] = new Point(depthSpacePoint.X, depthSpacePoint.Y);
@@ -180,7 +180,7 @@ namespace Kinect2.Streams
         private void DrawBody(IReadOnlyDictionary<JointType, Joint> joints, IDictionary<JointType, Point> jointPoints, DrawingContext drawingContext, Pen drawingPen)
         {
             // Draw the bones
-            foreach (var bone in this.bodyStructure.Bones)
+            foreach (var bone in this.bodyStructure.bones)
             {
                 this.DrawBone(joints, jointPoints, bone.Item1, bone.Item2, drawingContext, drawingPen);
             }
@@ -250,7 +250,7 @@ namespace Kinect2.Streams
             switch (handState)
             {
                 case HandState.Closed:
-                    drawingContext.DrawEllipse(this.handClosedBrush, null, handPosition, HandSize, HandSize);
+                    drawingContext.DrawEllipse(this.bodyStructure.HandClosedBrush, null, handPosition, HandSize, HandSize);
                     break;
 
                 case HandState.Open:
