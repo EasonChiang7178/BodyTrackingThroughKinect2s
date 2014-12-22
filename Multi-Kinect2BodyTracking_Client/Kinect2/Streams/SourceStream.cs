@@ -8,6 +8,9 @@ using Microsoft.Kinect;
 
 namespace Kinect2.Streams
 {
+    /// <summary>
+    /// Abstract class of source stream
+    /// </summary>
     abstract class SourceStream : IDisposable
     {
         #region Members
@@ -70,6 +73,9 @@ namespace Kinect2.Streams
         #endregion
     }
 
+    /// <summary>
+    /// Class for manipulating image stream
+    /// </summary>
     abstract class ImageStream : SourceStream
     {
         #region Members
@@ -91,7 +97,7 @@ namespace Kinect2.Streams
         /// <summary>
         /// Gets the bitmap of the source to display
         /// </summary>
-        public ImageSource imageSource {
+        public ImageSource ImageSource {
             get { return this.imageBitmap; }
         }
 
@@ -109,4 +115,15 @@ namespace Kinect2.Streams
 
         #endregion
     }
+
+    /// <summary>
+    /// Interface for accessing the 1-D dimension data
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public interface DataProduction<T>
+    {
+        T DataSource {
+            get;
+        }
+    } 
 }

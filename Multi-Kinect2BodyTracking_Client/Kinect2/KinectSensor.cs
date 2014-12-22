@@ -35,7 +35,7 @@ namespace Kinect2
         public ImageSource this[string streamName] {
             get {
                 if (openedStreams.ContainsKey(streamName) == true)
-                    return openedStreams[streamName].imageSource;
+                    return openedStreams[streamName].ImageSource;
 
                 throw new StreamHasNotBeenOpened(streamName);
             }
