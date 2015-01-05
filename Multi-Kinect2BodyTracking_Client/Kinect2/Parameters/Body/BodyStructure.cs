@@ -8,7 +8,7 @@ using Microsoft.Kinect;
 //-- Design Patterns --//
 using Patterns.Singleton;
 
-namespace Kinect2.DataFormat.Body
+namespace Kinect2.Parameters.Body
 {
     class BodyStructure : SingletonBase<BodyStructure>
     {
@@ -17,22 +17,22 @@ namespace Kinect2.DataFormat.Body
         /// <summary>
         /// Radius of drawn hand circles
         /// </summary>
-        public const double handSize = 30;
+        public readonly double handSize = 30;
 
         /// <summary>
         /// Thickness of drawn joint lines
         /// </summary>
-        public const double jointThickness = 3;
+        public readonly double jointThickness = 3;
 
         /// <summary>
         /// Thickness of clip edge rectangles
         /// </summary>
-        public const double clipBoundsThickness = 10;
+        public readonly double clipBoundsThickness = 10;
 
         /// <summary>
         /// Constant for clamping Z values of camera space points from being negative
         /// </summary>
-        public const float inferredZPositionClamp = 0.1f;
+        public readonly float inferredZPositionClamp = 0.1f;
 
         /// <summary>
         /// Brush used for drawing hands that are currently tracked as closed

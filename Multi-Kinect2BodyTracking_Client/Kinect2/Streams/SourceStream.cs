@@ -97,7 +97,7 @@ namespace Kinect2.Streams
         /// <summary>
         /// Gets the bitmap of the source to display
         /// </summary>
-        public ImageSource ImageSource {
+        public virtual ImageSource ImageSource {
             get { return this.imageBitmap; }
         }
 

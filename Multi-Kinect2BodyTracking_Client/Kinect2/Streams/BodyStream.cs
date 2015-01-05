@@ -6,7 +6,7 @@ using System.Windows.Media.Imaging;
 
 //-- Using Kinect2 API --//
 using Microsoft.Kinect;
-using Kinect2.DataFormat.Body;
+using Kinect2.Parameters.Body;
 
 namespace Kinect2.Streams
 {
@@ -17,13 +17,12 @@ namespace Kinect2.Streams
         /// <summary>
         /// Reader for Body frames
         /// </summary>
-        private Microsoft.Kinect.BodyFrameReader bodyFrameReader = null;
+        protected Microsoft.Kinect.BodyFrameReader bodyFrameReader = null;
 
         /// <summary>
         /// Coordinate mapper to map one type of point to another
         /// </summary>
-        private CoordinateMapper coordinateMapper = null;
-
+        protected CoordinateMapper coordinateMapper = null;
 
         /// <summary>
         /// Constant parameters for drawing bodies
@@ -33,27 +32,27 @@ namespace Kinect2.Streams
         /// <summary>
         /// Array for the bodies
         /// </summary>
-        private Body[] bodies = null;
+        protected Body[] bodies = null;
 
         /// <summary>
         /// Drawing group for body rendering output
         /// </summary>
-        private DrawingGroup drawingGroup;
+        protected DrawingGroup drawingGroup;
 
         /// <summary>
         /// Drawing image that we will display
         /// </summary>
-        private DrawingImage imageSource;
+        protected DrawingImage imageSource;
 
         /// <summary>
         /// Width of display block
         /// </summary>
-        private int displayWidth = 400;
+        protected int displayWidth = 400;
 
         /// <summary>
         /// Height of display block
         /// </summary>
-        private int displayHeight = 300;
+        protected int displayHeight = 300;
 
         #endregion
 
@@ -69,8 +68,15 @@ namespace Kinect2.Streams
         /// <summary>
         /// Hide original ImageSource with new, we used DrawingImage in BodyStream
         /// </summary>
-        public new ImageSource ImageSource {
-            get { return imageSource; }
+        public override ImageSource ImageSource {
+            get { return this.imageSource; }
+        }
+
+        /// <summary>
+        /// Implement the inferface to output 1-Dimension data
+        /// </summary>
+        public Body[] DataSource {
+            get { return bodies; }
         }
 
         #endregion
@@ -104,7 +110,7 @@ namespace Kinect2.Streams
                 // Create an image source that we can use in our image control
             this.imageSource = new DrawingImage(this.drawingGroup);
 
-                // Initialize body structure
+                // Access the parameters of body structure
             bodyStructure = BodyStructure.Instance;
 
                 // Open the reader for the body frames
@@ -139,12 +145,12 @@ namespace Kinect2.Streams
                     foreach (Body body in this.bodies) {
                         Pen drawPen = this.bodyStructure.bodyColors[penIndex++];
 
-                        if (body.IsTracked) {
+                        if (body.IsTracked == true) {
                             this.DrawClippedEdges(body, dc);
 
                             IReadOnlyDictionary<JointType, Joint> joints = body.Joints;
 
-                                // Convert the joint points to depth (display) space
+                            /* Convert the joint points to depth (display) space */
                             Dictionary<JointType, Point> jointPoints = new Dictionary<JointType, Point>();
 
                             foreach (JointType jointType in joints.Keys) {
@@ -177,7 +183,7 @@ namespace Kinect2.Streams
         /// <param name="jointPoints">translated positions of joints to draw</param>
         /// <param name="drawingContext">drawing context to draw to</param>
         /// <param name="drawingPen">specifies color to draw a specific body</param>
-        private void DrawBody(IReadOnlyDictionary<JointType, Joint> joints, IDictionary<JointType, Point> jointPoints, DrawingContext drawingContext, Pen drawingPen)
+        protected void DrawBody(IReadOnlyDictionary<JointType, Joint> joints, IDictionary<JointType, Point> jointPoints, DrawingContext drawingContext, Pen drawingPen)
         {
             // Draw the bones
             foreach (var bone in this.bodyStructure.bones)
@@ -194,16 +200,16 @@ namespace Kinect2.Streams
 
                 if (trackingState == TrackingState.Tracked)
                 {
-                    drawBrush = this.trackedJointBrush;
+                    drawBrush = this.bodyStructure.trackedJointBrush;
                 }
                 else if (trackingState == TrackingState.Inferred)
                 {
-                    drawBrush = this.inferredJointBrush;
+                    drawBrush = this.bodyStructure.inferredJointBrush;
                 }
 
                 if (drawBrush != null)
                 {
-                    drawingContext.DrawEllipse(drawBrush, null, jointPoints[jointType], JointThickness, JointThickness);
+                    drawingContext.DrawEllipse(drawBrush, null, jointPoints[jointType], this.bodyStructure.jointThickness, this.bodyStructure.jointThickness);
                 }
             }
         }
@@ -217,7 +223,7 @@ namespace Kinect2.Streams
         /// <param name="jointType1">second joint of bone to draw</param>
         /// <param name="drawingContext">drawing context to draw to</param>
         /// /// <param name="drawingPen">specifies color to draw a specific bone</param>
-        private void DrawBone(IReadOnlyDictionary<JointType, Joint> joints, IDictionary<JointType, Point> jointPoints, JointType jointType0, JointType jointType1, DrawingContext drawingContext, Pen drawingPen)
+        protected void DrawBone(IReadOnlyDictionary<JointType, Joint> joints, IDictionary<JointType, Point> jointPoints, JointType jointType0, JointType jointType1, DrawingContext drawingContext, Pen drawingPen)
         {
             Joint joint0 = joints[jointType0];
             Joint joint1 = joints[jointType1];
@@ -230,7 +236,7 @@ namespace Kinect2.Streams
             }
 
             // We assume all drawn bones are inferred unless BOTH joints are tracked
-            Pen drawPen = this.inferredBonePen;
+            Pen drawPen = this.bodyStructure.inferredBonePen;
             if ((joint0.TrackingState == TrackingState.Tracked) && (joint1.TrackingState == TrackingState.Tracked))
             {
                 drawPen = drawingPen;
@@ -245,20 +251,20 @@ namespace Kinect2.Streams
         /// <param name="handState">state of the hand</param>
         /// <param name="handPosition">position of the hand</param>
         /// <param name="drawingContext">drawing context to draw to</param>
-        private void DrawHand(HandState handState, Point handPosition, DrawingContext drawingContext)
+        protected void DrawHand(HandState handState, Point handPosition, DrawingContext drawingContext)
         {
             switch (handState)
             {
                 case HandState.Closed:
-                    drawingContext.DrawEllipse(this.bodyStructure.HandClosedBrush, null, handPosition, HandSize, HandSize);
+                    drawingContext.DrawEllipse(this.bodyStructure.handClosedBrush, null, handPosition, this.bodyStructure.handSize, this.bodyStructure.handSize);
                     break;
 
                 case HandState.Open:
-                    drawingContext.DrawEllipse(this.handOpenBrush, null, handPosition, HandSize, HandSize);
+                    drawingContext.DrawEllipse(this.bodyStructure.handOpenBrush, null, handPosition, this.bodyStructure.handSize, this.bodyStructure.handSize);
                     break;
 
                 case HandState.Lasso:
-                    drawingContext.DrawEllipse(this.handLassoBrush, null, handPosition, HandSize, HandSize);
+                    drawingContext.DrawEllipse(this.bodyStructure.handLassoBrush, null, handPosition, this.bodyStructure.handSize, this.bodyStructure.handSize);
                     break;
             }
         }
@@ -268,35 +274,35 @@ namespace Kinect2.Streams
         /// </summary>
         /// <param name="body">body to draw clipping information for</param>
         /// <param name="drawingContext">drawing context to draw to</param>
-        private void DrawClippedEdges(Body body, DrawingContext drawingContext) {
+        protected void DrawClippedEdges(Body body, DrawingContext drawingContext) {
             FrameEdges clippedEdges = body.ClippedEdges;
 
             if (clippedEdges.HasFlag(FrameEdges.Bottom)) {
                 drawingContext.DrawRectangle(
                     Brushes.Red,
                     null,
-                    new Rect(0, this.displayHeight - this.bodyStructure.ClipBoundsThickness, this.displayWidth, this.bodyStructure.ClipBoundsThickness));
+                    new Rect(0, this.displayHeight - this.bodyStructure.clipBoundsThickness, this.displayWidth, this.bodyStructure.clipBoundsThickness));
             }
 
             if (clippedEdges.HasFlag(FrameEdges.Top)) {
                 drawingContext.DrawRectangle(
                     Brushes.Red,
                     null,
-                    new Rect(0, 0, this.displayWidth, this.bodyStructure.ClipBoundsThickness));
+                    new Rect(0, 0, this.displayWidth, this.bodyStructure.clipBoundsThickness));
             }
 
             if (clippedEdges.HasFlag(FrameEdges.Left)) {
                 drawingContext.DrawRectangle(
                     Brushes.Red,
                     null,
-                    new Rect(0, 0, this.bodyStructure.ClipBoundsThickness, this.displayHeight));
+                    new Rect(0, 0, this.bodyStructure.clipBoundsThickness, this.displayHeight));
             }
 
             if (clippedEdges.HasFlag(FrameEdges.Right)) {
                 drawingContext.DrawRectangle(
                     Brushes.Red,
                     null,
-                    new Rect(this.displayWidth - this.bodyStructure.ClipBoundsThickness, 0, this.bodyStructure.ClipBoundsThickness, this.displayHeight));
+                    new Rect(this.displayWidth - this.bodyStructure.clipBoundsThickness, 0, this.bodyStructure.clipBoundsThickness, this.displayHeight));
             }
         }
 

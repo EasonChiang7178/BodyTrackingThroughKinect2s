@@ -4,15 +4,15 @@
 winexe
 C#
 .cs
-C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Client\obj\Debug\
+C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Client\obj\Release\
 Kinect2.MultiKinect2BodyTracking.Client
 none
 false
-DEBUG;TRACE
+TRACE
 C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Client\App.xaml
 11151548125
 
-14-1950358188
+151253104145
 13-1932384363
 MainWindow.xaml;
 
