@@ -51,12 +51,17 @@ namespace Kinect2.Streams
             // Get the coordinate mapper
             this.coordinateMapper = this.sensor.CoordinateMapper;
 
-            /* Preparing the empty depth image to display bodies */
+            /* Preparing the bodycolor image to display bodies */
                 // Get the color (display) extents
             FrameDescription frameDescription = this.sensor.ColorFrameSource.FrameDescription;
                 // Get size of joint space
             this.displayWidth = frameDescription.Width;
             this.displayHeight = frameDescription.Height;
+
+                // Initialize color image
+            this.imageBitmap = new WriteableBitmap(frameDescription.Width, frameDescription.Height, 96.0, 96.0, PixelFormats.Bgr32, null);
+
+                // Initialize body image
                 // Create the drawing group we'll use for drawing
             this.drawingGroup = new DrawingGroup();
                 // Create an image source that we can use in our image control
