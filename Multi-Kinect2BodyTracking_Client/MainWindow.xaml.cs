@@ -32,7 +32,7 @@ namespace Kinect2.MultiKinect2BodyTracking.Client
         #region Properties
 
         public ImageSource ImageSource {
-            get { return this.kinectSensor["BodyStream"]; }
+            get { return this.kinectSensor["BodyColorStream"]; }
         }
 
         #endregion
@@ -44,7 +44,7 @@ namespace Kinect2.MultiKinect2BodyTracking.Client
             /* Open the Kinect sensor */
             kinectSensor = KinectSensor.Instance;
                 // Initialize the stream we interested
-            kinectSensor.AddStream<BodyStream>();
+            kinectSensor.AddStream<BodyColorStream>();
                 // Run Kinect!
             kinectSensor.Open();
             

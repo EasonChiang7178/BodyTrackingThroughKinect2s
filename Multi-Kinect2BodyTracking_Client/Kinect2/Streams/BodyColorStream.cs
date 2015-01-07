@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -14,11 +15,31 @@ namespace Kinect2.Streams
     {
         #region Members
 
+        private WriteableBitmap bodyBitmap;
+
         /// <summary>
         /// Reader for color frames
         /// </summary>
         private Microsoft.Kinect.ColorFrameReader colorFrameReader = null;
-        
+
+        private RenderTargetBitmap _bodySourceRTB;
+        Grid rootGrid;
+        Image bodyImage;
+
+        private WriteableBitmap _colorWriteableBitmap;
+        private WriteableBitmap _bodyWriteableBitmap;
+
+        /// <summary>
+        /// Size of the RGB pixel in the bitmap
+        /// </summary>
+        private readonly int bytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
+
+        /// <summary>
+        /// Intermediate storage for receiving frame data from the sensor
+        /// </summary>
+        private byte[] pixels = null;
+        private byte[] bodyBytespixels = null;
+
         #endregion
 
         #region Properties
@@ -29,6 +50,14 @@ namespace Kinect2.Streams
         public override string StreamID
         {
             get { return "BodyColorStream"; }
+        }
+
+        /// <summary>
+        /// Hide original ImageSource with new, we used imageBitmap in SourceStream
+        /// </summary>
+        public override ImageSource ImageSource
+        {
+            get { return this.imageBitmap; }
         }
 
         #endregion
@@ -60,12 +89,23 @@ namespace Kinect2.Streams
 
                 // Initialize color image
             this.imageBitmap = new WriteableBitmap(frameDescription.Width, frameDescription.Height, 96.0, 96.0, PixelFormats.Bgr32, null);
+            this.bodyBitmap = new WriteableBitmap(frameDescription.Width, frameDescription.Height, 96.0, 96.0, PixelFormats.Bgr32, null);
 
                 // Initialize body image
                 // Create the drawing group we'll use for drawing
             this.drawingGroup = new DrawingGroup();
                 // Create an image source that we can use in our image control
             this.imageSource = new DrawingImage(this.drawingGroup);
+
+            // allocate space to put the pixels being received
+            this.pixels = new byte[frameDescription.Width * frameDescription.Height * this.bytesPerPixel];
+            this.bodyBytespixels = new byte[frameDescription.Width * frameDescription.Height * this.bytesPerPixel];
+
+            _bodySourceRTB = new RenderTargetBitmap(displayWidth, displayHeight, 96.0, 96.0, PixelFormats.Pbgra32);
+            rootGrid = new Grid();
+
+            //_colorWriteableBitmap = BitmapFactory.New(frameDescription.Width, frameDescription.Height);
+            //_bodyWriteableBitmap = BitmapFactory.New(frameDescription.Width, frameDescription.Height);
 
                 // Access the parameters of body structure
             bodyStructure = BodyStructure.Instance;
@@ -85,7 +125,7 @@ namespace Kinect2.Streams
         /// </summary>
         /// <param name="sender">object sending the event</param>
         /// <param name="e">event arguments</param>
-        private void Reader_ColorFrameArrived(object sender, ColorFrameArrivedEventArgs e)
+        private unsafe void Reader_ColorFrameArrived(object sender, ColorFrameArrivedEventArgs e)
         {
             /* ColorFrame is IDisposable */
             using (ColorFrame colorFrame = e.FrameReference.AcquireFrame())
@@ -94,13 +134,11 @@ namespace Kinect2.Streams
                 {
                     FrameDescription colorFrameDescription = colorFrame.FrameDescription;
 
-                    using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer())
-                    {
+                    using (KinectBuffer colorBuffer = colorFrame.LockRawImageBuffer()) {
                         this.imageBitmap.Lock();
 
                         // Verify data and write the new color frame data to the display bitmap
-                        if ((colorFrameDescription.Width == this.imageBitmap.PixelWidth) && (colorFrameDescription.Height == this.imageBitmap.PixelHeight))
-                        {
+                        if ((colorFrameDescription.Width == this.imageBitmap.PixelWidth) && (colorFrameDescription.Height == this.imageBitmap.PixelHeight)) {
                             colorFrame.CopyConvertedFrameDataToIntPtr(
                                 this.imageBitmap.BackBuffer,
                                 (uint)(colorFrameDescription.Width * colorFrameDescription.Height * 4),
@@ -110,6 +148,56 @@ namespace Kinect2.Streams
                         }
 
                         this.imageBitmap.Unlock();
+
+                        //imageBitmap.FromByteArray(this.pixels);
+                        var rec = new Rect(0, 0, colorFrameDescription.Width, colorFrameDescription.Height);
+                        using (imageBitmap.GetBitmapContext())
+                        {
+                            using (bodyBitmap.GetBitmapContext(ReadWriteMode.ReadOnly))
+                            {
+                                //imageBitmap.Blit(rec, bodyBitmap, rec, WriteableBitmapExtensions.BlendMode.None);
+
+                                    // Copy the source image into a byte buffer
+                                //int srcStride = imageBitmap.PixelWidth * (imageBitmap.Format.BitsPerPixel >> 3);
+                                //byte[] srcBuffer = new byte[srcStride * imageBitmap.PixelHeight];
+                                //imageBitmap.CopyPixels(srcBuffer, srcStride, 0);
+
+                                    // Copy the dest image into a byte buffer
+                                //int destStride = imageBitmap.PixelWidth * (bodyBitmap.Format.BitsPerPixel >> 3);
+                                //byte[] destBuffer = new byte[(imageBitmap.PixelWidth * imageBitmap.PixelHeight) << 2];
+                                //bodyBitmap.CopyPixels(new Int32Rect(0, 0, imageBitmap.PixelWidth, imageBitmap.PixelHeight), destBuffer, destStride, 0);
+
+                                // Do merge
+                                Byte* colorPtr = (Byte*)imageBitmap.BackBuffer;
+                                Byte* bodyPtr = (Byte*)bodyBitmap.BackBuffer;
+                                //int length = imageBitmap.BackBufferStride * imageBitmap.PixelHeight;
+                                for (int i = 0; i < 8294400; i = i + 4)//imageBitmap.BackBufferStride * imageBitmap.PixelHeight; i = i + 3)
+                                {
+                                    if (bodyPtr[i] == 255 && bodyPtr[i + 1] == 255 && bodyPtr[i + 2] == 255)
+                                        continue;
+
+                                    colorPtr[i + 0] = bodyPtr[i + 0];
+                                    colorPtr[i + 1] = bodyPtr[i + 1];
+                                    colorPtr[i + 2] = bodyPtr[i + 2];
+                                }
+
+                                // Do merge
+                                //Byte* destPtr = (Byte*)bodyBitmap.BackBuffer;
+                                //for (int i = 0; i < imageBitmap.BackBufferStride * imageBitmap.PixelHeight; i = i + 4, destPtr++)
+                                //{
+                                //    if (destPtr[i] == 255 && destPtr[i + 1] == 255 && destPtr[i + 2] == 255)
+                                //        continue;
+
+                                    //float srcAlpha = ((float) srcBuffer[i + 3] / 255);
+                                    //destBuffer[i + 0] = (byte)((srcBuffer[i + 0] * srcAlpha) + destBuffer[i + 0] * (1.0 - srcAlpha));
+                                    //destBuffer[i + 1] = (byte)((srcBuffer[i + 1] * srcAlpha) + destBuffer[i + 1] * (1.0 - srcAlpha));
+                                    //destBuffer[i + 2] = (byte)((srcBuffer[i + 2] * srcAlpha) + destBuffer[i + 2] * (1.0 - srcAlpha));
+                                //}
+
+                                // copy dest buffer back to the dest WriteableBitmap
+                                //imageBitmap.WritePixels(new Int32Rect(0, 0, imageBitmap.PixelWidth, imageBitmap.PixelHeight), destBuffer, destStride, 0);
+                            }
+                        }
                     }
                 }
             }
@@ -140,8 +228,8 @@ namespace Kinect2.Streams
             {
                 using (DrawingContext dc = this.drawingGroup.Open())
                 {
-                    // Draw a transparent background to set the render size
-                    dc.DrawRectangle(Brushes.Black, null, new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
+                        // Draw a transparent background to set the render size
+                    dc.DrawRectangle(Brushes.White, null, new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
 
                     int penIndex = 0;
                     foreach (Body body in this.bodies)
@@ -165,8 +253,8 @@ namespace Kinect2.Streams
                                 if (position.Z < 0)
                                     position.Z = this.bodyStructure.inferredZPositionClamp;
 
-                                DepthSpacePoint depthSpacePoint = this.coordinateMapper.MapCameraPointToDepthSpace(position);
-                                jointPoints[jointType] = new Point(depthSpacePoint.X, depthSpacePoint.Y);
+                                ColorSpacePoint colorSpacePoint = this.coordinateMapper.MapCameraPointToColorSpace(joints[jointType].Position);
+                                jointPoints[jointType] = new Point(colorSpacePoint.X, colorSpacePoint.Y);
                             }
 
                             this.DrawBody(joints, jointPoints, dc, drawPen);
@@ -177,6 +265,16 @@ namespace Kinect2.Streams
                     }
                     // Prevent drawing outside of our render area
                     this.drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
+
+                    bodyImage = new Image { Source = imageSource, Width = this.displayWidth, Height = this.displayHeight };
+                    rootGrid.Children.Clear();
+                    rootGrid.Children.Add(bodyImage);
+                    rootGrid.Measure(new Size(bodyImage.Width, bodyImage.Height));
+                    rootGrid.Arrange(new Rect(0, 0, bodyImage.Width, bodyImage.Height));
+                    _bodySourceRTB.Clear();
+                    _bodySourceRTB.Render(rootGrid);
+                    _bodySourceRTB.CopyPixels(this.bodyBytespixels, displayWidth * this.bytesPerPixel, 0);
+                    bodyBitmap.FromByteArray(this.bodyBytespixels);
                 }
             }
         }
