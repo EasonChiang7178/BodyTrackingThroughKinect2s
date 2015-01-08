@@ -113,6 +113,24 @@ namespace Kinect2.Streams
             : base(kinectSensor)
         {}
 
+        /// <summary>
+        /// Resize the WriteableBitmap
+        /// </summary>
+        /// <param name="srcBitmap"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        public void ResizeWriteableBitmap(ref WriteableBitmap srcBitmap, ref WriteableBitmap destBitmap, int width, int height) {
+            var resizedBitmap = WriteableBitmapExtensions.Resize(srcBitmap, width, height, WriteableBitmapExtensions.Interpolation.Bilinear);
+
+            Rect rec = new Rect(0, 0, width, height);
+            using (resizedBitmap.GetBitmapContext()) {
+                using (resizedBitmap.GetBitmapContext()) {
+                    destBitmap.Blit(rec, resizedBitmap, rec, WriteableBitmapExtensions.BlendMode.None);
+                }
+            }
+        }
+
         #endregion
     }
 

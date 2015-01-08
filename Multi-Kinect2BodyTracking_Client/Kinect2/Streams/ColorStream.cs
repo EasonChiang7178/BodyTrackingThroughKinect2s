@@ -28,6 +28,14 @@ namespace Kinect2.Streams
             get { return "ColorStream"; }
         }
 
+        /// <summary>
+        /// Hide original ImageSource with new, we used imageBitmap in SourceStream
+        /// </summary>
+        public override ImageSource ImageSource
+        {
+            get { return this.imageBitmap; }
+        }
+
         #endregion
 
         #region Methods
@@ -59,7 +67,8 @@ namespace Kinect2.Streams
         /// </summary>
         /// <param name="sender">object sending the event</param>
         /// <param name="e">event arguments</param>
-        private void Reader_ColorFrameArrived(object sender, ColorFrameArrivedEventArgs e) {
+        private unsafe void Reader_ColorFrameArrived(object sender, ColorFrameArrivedEventArgs e)
+        {
             /* ColorFrame is IDisposable */
             using (ColorFrame colorFrame = e.FrameReference.AcquireFrame()) {
                 if (colorFrame != null) {
