@@ -29,7 +29,7 @@ namespace Kinect2.Streams
         /// <summary>
         /// Use to render the bitmap for body stream
         /// </summary>
-        private RenderTargetBitmap bitmapRender;
+        private RenderTargetBitmap bitmapRender = null;
 
         /// <summary>
         /// Size of the RGB pixel in the bitmap
@@ -255,9 +255,10 @@ namespace Kinect2.Streams
                             this.DrawHand(body.HandRightState, jointPoints[JointType.HandRight], dc);
                         }
                     }
-                    // Prevent drawing outside of our render area
+                        // Prevent drawing outside of our render area
                     this.drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0.0, 0.0, this.displayWidth, this.displayHeight));
 
+                    /* Transforming DrawingImage to WriteableImage, are there any other better methods to do this? */
                     bodyImage = new Image { Source = imageSource, Width = this.displayWidth, Height = this.displayHeight };
 
                     rootGrid.Children.Clear();
