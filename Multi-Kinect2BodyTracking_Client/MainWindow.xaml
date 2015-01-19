@@ -5,7 +5,7 @@
         Height="600" Width="650" 
         Closing="MainWindow_Closing">
 
-    <Grid Margin="5,0,5,5">
+    <Grid Margin="5,0,5,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="360"/>
             <RowDefinition Height="200*"/>
@@ -15,11 +15,12 @@
         <Viewbox Grid.Row="0" HorizontalAlignment="Center">
             <Image Source="{Binding ImageSource}" Stretch="UniformToFill" />
         </Viewbox>
-        <TextBlock HorizontalAlignment="Left" Margin="5,5,5,5" Grid.Row="1" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="160" Width="625"/>
+        <TextBlock Name="status_TextBlock" HorizontalAlignment="Left" Margin="5,5,5,5" Grid.Row="1" TextWrapping="Wrap" Text="Click button to connect..." VerticalAlignment="Top" Height="160" Width="625"/>
 
-        <TextBox HorizontalAlignment="Left" Height="20" Margin="50,10,5,5" Grid.Row="2" TextWrapping="Wrap" Text="192.168.1.32" VerticalAlignment="Top" Width="100" RenderTransformOrigin="0.5,0.5"/>
-        <Button Content="Connect Server" HorizontalAlignment="Left" Margin="170,10,5,5" Grid.Row="2" VerticalAlignment="Top" Width="110" Height="20"/>
-        <Button Content="Log data" HorizontalAlignment="Left" Margin="310,10,5,5" Grid.Row="2" VerticalAlignment="Top" Width="110"/>
-        <Button Content="Reset tracker" HorizontalAlignment="Left" Margin="450,10,5,5" Grid.Row="2" VerticalAlignment="Top" Width="110"/>
+        <Rectangle Fill="#FFDDDDDD" HorizontalAlignment="Left" Height="25" Margin="32,7,0,0" Grid.Row="2" VerticalAlignment="Top" Width="226" RenderTransformOrigin="0.071,0.099"/>
+        <TextBox Name="serverIP_TextBox" HorizontalAlignment="Left" Height="19.2" Margin="35,10,5,5" Grid.Row="2" TextWrapping="Wrap" Text="192.168.1.32" VerticalAlignment="Top" Width="110" RenderTransformOrigin="0.5,0.5"/>
+        <Button Name="connect_Button" Content="Connect" HorizontalAlignment="Left" Margin="145,10,5,5" Grid.Row="2" VerticalAlignment="Top" Width="110" FontSize="11" Height="19.2" Background="LightGreen" Click="ConnectButton_Click"/>
+        <Button Content="Log data" HorizontalAlignment="Left" Margin="305,10,0,5" Grid.Row="2" VerticalAlignment="Top" Width="110"/>
+        <Button Content="Reset tracker" HorizontalAlignment="Left" Margin="460,10,0,5" Grid.Row="2" VerticalAlignment="Top" Width="110"/>
     </Grid>
 </Window>
