@@ -7,7 +7,7 @@
     <ProjectGuid>{3E7C4CDE-9615-4A6A-A388-ACF08D9A664A}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Kinect2.MultiKinect2BodyTracking.Client</RootNamespace>
+    <RootNamespace>Kinect2.MultiKinects2BodyTracking.Client</RootNamespace>
     <AssemblyName>Multi-Kinect2BodyTracking_Client</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -84,6 +84,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Kinect2\MultiKinects2BodyTracking\Client\ThreadProcedures\PrintTrackingResults.cs" />
+    <Compile Include="Kinect2\MultiKinects2BodyTracking\Client\ThreadProcedures\UpdateResultsToServer.cs" />
     <Compile Include="Kinect2\Parameters\Body\BodyStructure.cs" />
     <Compile Include="Kinect2\Exceptions\Exceptions.cs" />
     <Compile Include="Kinect2\Streams\BodyColorStream.cs" />
@@ -144,6 +146,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

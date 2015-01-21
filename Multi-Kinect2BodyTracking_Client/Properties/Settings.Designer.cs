@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Kinect2.MultiKinect2BodyTracking.Client.Properties {
+namespace Kinect2.MultiKinects2BodyTracking.Client.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

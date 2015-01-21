@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Kinect2.MultiKinect2BodyTracking.Client.Properties {
+namespace Kinect2.MultiKinects2BodyTracking.Client.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Kinect2.MultiKinect2BodyTracking.Client.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Kinect2.MultiKinect2BodyTracking.Client.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Kinect2.MultiKinects2BodyTracking.Client.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -30,3 +30,4 @@ C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect
 C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Client\bin\Debug\WriteableBitmapEx.Wpf.dll
 C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Client\bin\Debug\WriteableBitmapEx.Wpf.pdb
 C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Client\bin\Debug\WriteableBitmapEx.Wpf.xml
+C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Client\obj\Debug\Kinect2.MultiKinects2BodyTracking.Client.Properties.Resources.resources
