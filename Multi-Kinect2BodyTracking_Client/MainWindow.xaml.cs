@@ -99,6 +99,13 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
         /// <param name="e">event arguments</param>
         private void MainWindow_Closing(object sender, CancelEventArgs e) {
             this.kinectSensor.Close();
+
+            this.printResultThreadAlive = false;
+            if (this.updateResultThreadAlive) {
+                e.Cancel = true;
+                this.updateResultThreadAlive = false;
+                MessageBox.Show("Please disconnect before closing");
+            }
         }
 
         ///// <summary>
