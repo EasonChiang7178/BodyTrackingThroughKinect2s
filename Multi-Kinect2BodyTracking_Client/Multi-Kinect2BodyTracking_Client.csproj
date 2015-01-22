@@ -51,11 +51,15 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MathNet.Numerics">
+      <HintPath>..\packages\MathNet.Numerics.3.5.0\lib\net40\MathNet.Numerics.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Kinect, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Kinect.2.0.1410.19000\lib\net45\Microsoft.Kinect.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -84,8 +88,12 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Kinect2\MultiKinects2BodyTracking\Client\TCPConnection\ConnectionCommands.cs" />
+    <Compile Include="Kinect2\MultiKinects2BodyTracking\Client\TCPConnection\TCPConnector.cs" />
     <Compile Include="Kinect2\MultiKinects2BodyTracking\Client\ThreadProcedures\PrintTrackingResults.cs" />
     <Compile Include="Kinect2\MultiKinects2BodyTracking\Client\ThreadProcedures\UpdateResultsToServer.cs" />
+    <Compile Include="Kinect2\MultiKinects2BodyTracking\DataStructure\KinectData.cs" />
+    <Compile Include="Kinect2\MultiKinects2BodyTracking\DataStructure\Utilities.cs" />
     <Compile Include="Kinect2\Parameters\Body\BodyStructure.cs" />
     <Compile Include="Kinect2\Exceptions\Exceptions.cs" />
     <Compile Include="Kinect2\Streams\BodyColorStream.cs" />
