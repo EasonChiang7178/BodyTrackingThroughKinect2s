@@ -210,21 +210,17 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure {
             int index = 0;
 
             try {
+                    // KinectID
                 kinectID = Int32.Parse(kinectData[index++]);
-
+                    // Body Counts
                 int skeletonCount = Int32.Parse(kinectData[index++]);
                 if (skeletonCount == 0)
                     skeletonArray = null;
-                else
-                {
-                    skeletonArray = new Skeleton[skeletonCount];
-                    for (int c = 0; c < skeletonCount; ++c)
-                    {
+                else {
+                    skeletonArray = new Body[skeletonCount];
 
-
-                        skeletonArray[c] = new Skeleton();
-
-                        skeletonArray[c].TrackingId = Int32.Parse(kinectData[index++]);
+                    for (int c = 0; c < skeletonCount; ++c) {
+                        skeletonArray[c].TrackingId = UInt64.Parse(kinectData[index++]);
 
                         skeletonArray[c].TrackingState = getSkeletonTrackingStateFromString(kinectData[index++]);
 
@@ -354,40 +350,15 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure {
             string t = "";
             try
             {
-                t +=
-                    "---------Print Kinect parameters---------" + Environment.NewLine +
-                    "<sound> " + Environment.NewLine +
-                    "beam angle = " + sp.beamAngle.ToString("F2") + Environment.NewLine +
-                    "source angle = " + sp.sourceAngle.ToString("F2") + Environment.NewLine +
-                    "source confidence = " + sp.sourceConfidence.ToString("F2") + Environment.NewLine +
+                t += "---------Print Kinect parameters---------" + Environment.NewLine;
 
-                    "<face tracking>" + Environment.NewLine;
-                if (faceArray != null)
-                {
-                    for (int i = 0; i < faceArray.Length; ++i)
-                    {
-                        if (faceArray[i] == null) continue;
-                        t +=
-                            "face " + i + ":" + faceArray[i].faceTrackingState.ToString() + Environment.NewLine;
-                        if (faceArray[i].faceTrackingState == facePose.FaceTrackingState.SUCCESSFUL)
-                        {
-                            t +=
-                            "translation = " + faceArray[i].getParameterStringPositionOnly() + Environment.NewLine +
-                            "rotation = " + faceArray[i].getParameterStringInAngleOnly() + Environment.NewLine;
-                        }
-                    }
-                }
                 t += "<skeleton tracking>" + Environment.NewLine;
-                if (skeletonArray != null)
-                {
-                    for (int i = 0; i < skeletonArray.Length; ++i)
-                    {
-
-                        if (skeletonArray[i] == null) continue;
-                        if (skeletonArray[i].TrackingState != SkeletonTrackingState.NotTracked)
-                        {
-
-                            t += Environment.NewLine + "skeleton " + skeletonArray[i].TrackingId + ":" + skeletonArray[i].TrackingState + " ";
+                if (skeletonArray != null) {
+                    for (int i = 0; i < skeletonArray.Length; ++i) {
+                        if (skeletonArray[i] == null)
+                            continue;
+                        if (skeletonArray[i].IsTracked  == true) {
+                            t += Environment.NewLine + "skeleton " + skeletonArray[i].TrackingId + ":" + skeletonArray[i]. + " ";
 
                             t += skeletonArray[i].Position.X.ToString("F2") + " " + skeletonArray[i].Position.Y.ToString("F2") + " " + skeletonArray[i].Position.Z.ToString("F2") + Environment.NewLine;
                         }
