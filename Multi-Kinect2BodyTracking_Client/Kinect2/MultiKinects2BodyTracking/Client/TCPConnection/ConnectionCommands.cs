@@ -2,10 +2,10 @@
 namespace Kinect2.MultiKinects2BodyTracking.Client.TCPConnection
 {
     //client types, KINECT = kinect client, ROBOT = user client
-    enum clientTypes { KINECT, DATA_PROCESSOR, ROBOT, UNKNOWN };
+    public enum clientTypes { KINECT, DATA_PROCESSOR, ROBOT, UNKNOWN };
 
     //define upload commands
-    enum UploadCommands
+    public enum UploadCommands
     {
         Update_knect_data_in_Base64_format, //	Used by Kinect Client
         Update_fused_knect_data_in_Base64_format,
@@ -13,7 +13,7 @@ namespace Kinect2.MultiKinects2BodyTracking.Client.TCPConnection
     }
 
     //define download commands
-    enum DownloadCommands
+    public enum DownloadCommands
     {
         Get_total_number_of_alive_Kinect_Client,
         Get_kinect_matrices,
@@ -46,7 +46,7 @@ namespace Kinect2.MultiKinects2BodyTracking.Client.TCPConnection
     }
 
     //define other commands
-    enum OtherCommands
+    public enum OtherCommands
     {
         Disconnect_from_server_server_close_connection,
         Disconnect_from_server_server_hangs_and_wait_for_this_client_to_close_connection

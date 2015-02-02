@@ -18,7 +18,7 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure
         /// </summary>
         /// <param name="skOrigin"></param>
         /// <returns></returns>
-        public static Body CloneSkeleton(this Body skOrigin) {
+        public static BodyData CloneSkeleton(this BodyData skOrigin) {
             try {
                 MemoryStream ms = new MemoryStream();
                 BinaryFormatter bf = new BinaryFormatter();
@@ -27,13 +27,13 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure
                 ms.Position = 0;
                 object obj = bf.Deserialize(ms);
                 ms.Close();
-                return obj as Body;
+                return obj as BodyData;
             } catch (Exception ex) {
                 string ss = ex.ToString();
                 MessageBox.Show(ss);
 
                 object obj =  new object();
-                return obj as Body;
+                return obj as BodyData;
             }
         }
     }
@@ -217,9 +217,9 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure
 
             var svd = H.Svd(true);  
             svd.Solve(H);
-            var U = (DenseMatrix)svd.U();
-            var VT = (DenseMatrix)svd.VT();
-            var W = (DenseMatrix)svd.W();
+            var U = (DenseMatrix)svd.U;
+            var VT = (DenseMatrix)svd.VT;
+            var W = (DenseMatrix)svd.W;
             VT = (DenseMatrix)VT.Transpose();
             U = (DenseMatrix)U.Transpose();
             

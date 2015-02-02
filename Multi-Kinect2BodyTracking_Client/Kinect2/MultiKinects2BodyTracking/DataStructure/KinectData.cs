@@ -134,6 +134,70 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure {
         #endregion // Methods
     }
 
+    public class BodyData {
+
+        #region Members
+
+        protected Dictionary<JointType, Joint> joints = new Dictionary<JointType, Joint>();
+
+        protected CameraSpacePoint centerPoint = new CameraSpacePoint();
+
+        protected ulong trackingId = 0;
+
+        protected TrackingState trackingState = TrackingState.NotTracked;
+
+        #endregion // Members
+
+        #region Properties
+
+            // Gets or sets the skeleton's joints.
+        public IDictionary<JointType, Joint> Joints { 
+            get { return joints;}
+            protected set {
+                foreach (JointType jointType in Enum.GetValues(typeof(JointType)))
+                    joints[jointType] = value[jointType];
+            }
+        }
+
+            // Gets or sets the skeleton's position.
+        public CameraSpacePoint Position {
+            get { return centerPoint; }
+            set { centerPoint = value; }
+        }
+
+            // Gets or sets the skeleton's tracking ID.
+        public ulong TrackingId {
+            get { return trackingId; }
+            set { trackingId = value; }
+        }
+
+            // Gets or sets the skeleton's current tracking state.
+        public TrackingState TrackingState {
+            get { return TrackingState; }
+            set { TrackingState = value; }
+        }
+
+        #endregion Properties
+
+        #region Methods
+
+            // Initializes a new instance of the BodyData class.
+        public BodyData() {
+            Joint empty;
+            empty.Position = new CameraSpacePoint();
+            empty.TrackingState = TrackingState.NotTracked;
+
+            foreach (JointType jointType in Enum.GetValues(typeof(JointType))) {
+                empty.JointType = jointType;
+                joints.Add(jointType, empty);
+            }
+
+        }
+
+        #endregion Methods
+
+    };
+
     /// <summary>
     /// The class used to store the tracking results of the Kinect
     /// </summary>
@@ -145,7 +209,7 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure {
         StringCompressor compressor = new StringCompressor();
         public int kinectID = -1;
         
-        public Body[] skeletonArray;
+        public BodyData[] skeletonArray;
 
         #endregion // Members
 
@@ -160,7 +224,7 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure {
             
             try {
                 if (skeletonArray != null) {
-                    newObject.skeletonArray = new Body[skeletonArray.Length];
+                    newObject.skeletonArray = new BodyData[skeletonArray.Length];
                     for (int i = 0; i < skeletonArray.Length; ++i) {
                         if (skeletonArray[i] != null)
                             newObject.skeletonArray[i] = skeletonArray[i].CloneSkeleton();
@@ -216,43 +280,23 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure {
                 int skeletonCount = Int32.Parse(kinectData[index++]);
                 if (skeletonCount == 0)
                     skeletonArray = null;
-                else {
-                    skeletonArray = new Body[skeletonCount];
+                else { // Body Data
+                    skeletonArray = new BodyData[skeletonCount];
 
                     for (int c = 0; c < skeletonCount; ++c) {
+                            // BodyData.TrackingId
                         skeletonArray[c].TrackingId = UInt64.Parse(kinectData[index++]);
-
+                            // BodyData.TrackingState
                         skeletonArray[c].TrackingState = getSkeletonTrackingStateFromString(kinectData[index++]);
-
+                            // BodyData.Position
                         skeletonArray[c].Position = getSkeletonPointFromString(kinectData[index++]);
 
-                        skeletonArray[c].Joints[JointType.Head] = setJointPositionFromString(kinectData[index++], skeletonArray[c].Joints[JointType.Head]);
-                        skeletonArray[c].Joints[JointType.ShoulderCenter] = setJointPositionFromString(kinectData[index++], skeletonArray[c].Joints[JointType.ShoulderCenter]);
-                        skeletonArray[c].Joints[JointType.Spine] = setJointPositionFromString(kinectData[index++], skeletonArray[c].Joints[JointType.Spine]);
-                        skeletonArray[c].Joints[JointType.HipCenter] = setJointPositionFromString(kinectData[index++], skeletonArray[c].Joints[JointType.HipCenter]);
-                        skeletonArray[c].Joints[JointType.ShoulderLeft] = setJointPositionFromString(kinectData[index++], skeletonArray[c].Joints[JointType.ShoulderLeft]);
-                        skeletonArray[c].Joints[JointType.ElbowLeft] = setJointPositionFromString(kinectData[index++], skeletonArray[c].Joints[JointType.ElbowLeft]);
-                        skeletonArray[c].Joints[JointType.WristLeft] = setJointPositionFromString(kinectData[index++], skeletonArray[c].Joints[JointType.WristLeft]);
-                        skeletonArray[c].Joints[JointType.HandLeft] = setJointPositionFromString(kinectData[index++], skeletonArray[c].Joints[JointType.HandLeft]);
-                        skeletonArray[c].Joints[JointType.ShoulderRight] = setJointPositionFromString(kinectData[index++], skeletonArray[c].Joints[JointType.ShoulderRight]);
-                        skeletonArray[c].Joints[JointType.ElbowRight] = setJointPositionFromString(kinectData[index++], skeletonArray[c].Joints[JointType.ElbowRight]);
-                        skeletonArray[c].Joints[JointType.WristRight] = setJointPositionFromString(kinectData[index++], skeletonArray[c].Joints[JointType.WristRight]);
-                        skeletonArray[c].Joints[JointType.HandRight] = setJointPositionFromString(kinectData[index++], skeletonArray[c].Joints[JointType.HandRight]);
-                        skeletonArray[c].Joints[JointType.HipLeft] = setJointPositionFromString(kinectData[index++], skeletonArray[c].Joints[JointType.HipLeft]);
-                        skeletonArray[c].Joints[JointType.KneeLeft] = setJointPositionFromString(kinectData[index++], skeletonArray[c].Joints[JointType.KneeLeft]);
-                        skeletonArray[c].Joints[JointType.AnkleLeft] = setJointPositionFromString(kinectData[index++], skeletonArray[c].Joints[JointType.AnkleLeft]);
-                        skeletonArray[c].Joints[JointType.FootLeft] = setJointPositionFromString(kinectData[index++], skeletonArray[c].Joints[JointType.FootLeft]);
-                        skeletonArray[c].Joints[JointType.HipRight] = setJointPositionFromString(kinectData[index++], skeletonArray[c].Joints[JointType.HipRight]);
-                        skeletonArray[c].Joints[JointType.KneeRight] = setJointPositionFromString(kinectData[index++], skeletonArray[c].Joints[JointType.KneeRight]);
-                        skeletonArray[c].Joints[JointType.AnkleRight] = setJointPositionFromString(kinectData[index++], skeletonArray[c].Joints[JointType.AnkleRight]);
-                        skeletonArray[c].Joints[JointType.FootRight] = setJointPositionFromString(kinectData[index++], skeletonArray[c].Joints[JointType.FootRight]);
+                        foreach (JointType jointType in Enum.GetValues(typeof(JointType)))
+                            skeletonArray[c].Joints[jointType] = setJointPositionFromString(kinectData[index++], skeletonArray[c].Joints[jointType]);
                     }
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 string ss = e.ToString();
-
             }
         }
 
@@ -271,21 +315,21 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure {
                     for (int i = 0; i < skeletonArray.Length; ++i) {
                         if (skeletonArray[i] == null)
                             continue;
-                        if (skeletonArray[i].IsTracked == true)
+                        if (skeletonArray[i].TrackingState != TrackingState.NotTracked)
                             skeletonCount.Add(i);
                     }
                     s += skeletonCount.Count + "*";
 
-                    foreach (Body sk in skeletonArray) {
+                    foreach (BodyData sk in skeletonArray) {
                             // 22*4 +4+1= 88+5=93 doubles <- WT...
                         if (sk == null)
                             continue;
-                        if (sk.IsTracked == null)
+                        if (sk.TrackingState != TrackingState.NotTracked)
                             continue;
 
                         s += sk.TrackingId + "*";
-//TOCHECK
-                        s += sk.LeanTrackingState + "*";
+
+                        s += sk.TrackingState + "*";
 
                         if (type != SkeletonArrayType.HEAD_ONLY) {
                             s += sk.Joints[JointType.SpineMid].Position.X.ToString("F2") + " ";
@@ -333,9 +377,7 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure {
                         s += AddJointToString(sk.Joints[JointType.AnkleRight]);
                         s += AddJointToString(sk.Joints[JointType.FootRight]);
                     }
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     string sss = ex.ToString();
                     MessageBox.Show("[WARNING] Something was wrong in GetSkeletonArrayString");
                 }
@@ -357,16 +399,14 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure {
                     for (int i = 0; i < skeletonArray.Length; ++i) {
                         if (skeletonArray[i] == null)
                             continue;
-                        if (skeletonArray[i].IsTracked  == true) {
-                            t += Environment.NewLine + "skeleton " + skeletonArray[i].TrackingId + ":" + skeletonArray[i]. + " ";
+                        if (skeletonArray[i].TrackingState != TrackingState.NotTracked) {
+                            t += Environment.NewLine + "skeleton " + skeletonArray[i].TrackingId + ":" + skeletonArray[i].TrackingState + " ";
 
                             t += skeletonArray[i].Position.X.ToString("F2") + " " + skeletonArray[i].Position.Y.ToString("F2") + " " + skeletonArray[i].Position.Z.ToString("F2") + Environment.NewLine;
                         }
                     }
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 t += Environment.NewLine + "fail to print! :" + e.ToString();
             }
             return t;
@@ -393,15 +433,18 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure {
             return s;
         }
 
-        //set data to a joint from string
-        Joint setJointPositionFromString(string s, Joint j)
-        {
+        /// <summary>
+        /// Set data to a joint from string
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="j"></param>
+        /// <returns></returns>
+        Joint setJointPositionFromString(string s, Joint j) {
             string[] data = s.Split(' ');
 
             j.TrackingState = getJointTrackingStateFromString(data[0]);
-            if (j.TrackingState != JointTrackingState.NotTracked)
-            {
-                SkeletonPoint ss = j.Position;
+            if (j.TrackingState != TrackingState.NotTracked) {
+                CameraSpacePoint ss = j.Position;
                 ss.X = float.Parse(data[1]);
                 ss.Y = float.Parse(data[2]);
                 ss.Z = float.Parse(data[3]);
@@ -410,20 +453,16 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure {
             return j;
         }
 
-
-        Joint setJointFromValue(SkeletonPoint sp, JointTrackingState sts, Joint j)
-        {
+        Joint setJointFromValue(CameraSpacePoint sp, TrackingState sts, Joint j) {
             j.Position = sp;
             j.TrackingState = sts;
 
             return j;
         }
 
-
-        SkeletonPoint getSkeletonPointFromString(string s)
-        {
+        CameraSpacePoint getSkeletonPointFromString(string s) {
             string[] ss = s.Split(' ');
-            SkeletonPoint p = new SkeletonPoint();
+            CameraSpacePoint p = new CameraSpacePoint();
 
             p.X = float.Parse(ss[0]);
             p.Y = float.Parse(ss[1]);
@@ -433,53 +472,42 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure {
         }
 
 
-        SkeletonTrackingState getSkeletonTrackingStateFromString(string s)
-        {
+        TrackingState getSkeletonTrackingStateFromString(string s) {
             if (s == "NotTracked")
-                return SkeletonTrackingState.NotTracked;
+                return TrackingState.NotTracked;
             else if (s == "PositionOnly")
-                return SkeletonTrackingState.PositionOnly;
+                return TrackingState.Inferred;
             else
-                return SkeletonTrackingState.Tracked;
+                return TrackingState.Tracked;
         }
 
-        JointTrackingState getJointTrackingStateFromString(string s)
-        {
+        TrackingState getJointTrackingStateFromString(string s) {
             if (s == "Tracked")
-                return JointTrackingState.Tracked;
+                return TrackingState.Tracked;
             else if (s == "Inferred")
-                return JointTrackingState.Inferred;
+                return TrackingState.Inferred;
             else
-                return JointTrackingState.NotTracked;
+                return TrackingState.NotTracked;
         }
 
-        //transform kinect data according to T
-        public void transformTo(DenseMatrix T)
-        {
-            //transform spGoal for visualization
-            sp.spGoal.transformInPlace(T);
+        /// <summary>
+        /// Transform Kinect data according to T
+        /// </summary>
+        /// <param name="T"></param>
+        public void transformTo(DenseMatrix T) {
+                // Transform skeleton data
+            if (skeletonArray != null) {
+                foreach (BodyData s in skeletonArray) {
+                    if (s == null)
+                        return;
 
-            //transform face data
-            if (faceArray != null)
-            {
-                for (int i = 0; i < faceArray.Length; ++i)
-                {
-                    if (faceArray[i] == null) return;
-                    faceArray[i].transformInPlace(T);
-                }
-            }
-            //transform skeleton data
-            if (skeletonArray != null)
-            {
-                foreach (Skeleton s in skeletonArray)
-                {
-                    if (s == null) return;
-                    if (s.TrackingState == SkeletonTrackingState.NotTracked) continue;
-                    s.Position =
+                    if (s.TrackingState == TrackingState.NotTracked)
+                        continue;
+
                     s.Position = transformSkeletonPointto(s.Position, T);
                     foreach (JointType j in Enum.GetValues(typeof(JointType)))
                     {
-                        SkeletonPoint spp = transformSkeletonPointto(s.Joints[j].Position, T);
+                        CameraSpacePoint spp = transformSkeletonPointto(s.Joints[j].Position, T);
                         Joint jj = s.Joints[j];
                         jj.Position = spp;
                         s.Joints[j] = jj;
@@ -488,9 +516,13 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure {
             }
         }
 
-        //transform Point3D using T
-        public Point3D transformPointto(Point3D p, DenseMatrix T)
-        {
+        /// <summary>
+        /// Transform Point3D using T
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="T"></param>
+        /// <returns></returns>
+        public Point3D transformPointto(Point3D p, DenseMatrix T) {
             DenseVector p1 = new DenseVector(4);
             p1[0] = p.X;
             p1[1] = p.Y;
@@ -501,12 +533,15 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure {
 
             Point3D p2 = new Point3D(p1[0], p1[1], p1[2]);
             return p2;
-
         }
 
-        //transform SkeletonPoint using T
-        SkeletonPoint transformSkeletonPointto(SkeletonPoint p, DenseMatrix T)
-        {
+        /// <summary>
+        /// Transform CameraPoint using T
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="T"></param>
+        /// <returns></returns>
+        CameraSpacePoint transformSkeletonPointto(CameraSpacePoint p, DenseMatrix T) {
             DenseVector p1 = new DenseVector(4);
             p1[0] = p.X;
             p1[1] = p.Y;
@@ -515,13 +550,12 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure {
 
             p1 = T * p1;
 
-            SkeletonPoint p2 = new SkeletonPoint();
-            p2.X = (float)p1[0];
-            p2.Y = (float)p1[1];
-            p2.Z = (float)p1[2];
+            CameraSpacePoint p2 = new CameraSpacePoint();
+            p2.X = (float) p1[0];
+            p2.Y = (float) p1[1];
+            p2.Z = (float) p1[2];
 
             return p2;
-
         }
     }
 }

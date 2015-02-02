@@ -10,7 +10,7 @@ namespace Kinect2.MultiKinects2BodyTracking.Client.TCPConnection {
     /// <summary>
     /// Construct the connection between the MultiKinect2BodyTracking client and server
     /// </summary>
-    class TCPConnector
+    public class TCPConnector
     {
 
         #region Members

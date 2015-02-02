@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading;
 
 using Kinect2.MultiKinects2BodyTracking.Client.TCPConnection;
+using Kinect2.MultiKinects2BodyTracking.DataStructure;
 
 namespace Kinect2.MultiKinects2BodyTracking.Client.ThreadProcedures {
     /// <summary>
@@ -74,7 +75,7 @@ namespace Kinect2.MultiKinects2BodyTracking.Client.ThreadProcedures {
 
                 /* Send command to update data to server */
                 action = (int) UploadCommands.Update_knect_data_in_Base64_format;
-                dataToSend = "u " + action.ToString() + " " + mw.kinectparameters_local.getAllParameterStringInBase64();
+                dataToSend = "u " + action.ToString() + " " + mw.kinectparameters_local.GetAllParameterStringInBase64();
                 mw.tcpConnector.SendData(dataToSend);
 
                 /* Download fused data from central server */
@@ -90,7 +91,7 @@ namespace Kinect2.MultiKinects2BodyTracking.Client.ThreadProcedures {
                     try
                     {
                         string[] ss = resultData.Split('#');
-                        mw.fusedKinectParameter.assignByAllParameterStringInBase64(ss[1]);
+                        mw.fusedKinectParameter.AssignByAllParameterStringInBase64(ss[1]);
                     }
                     catch (Exception ex) { /* Ignore failed data and continue */ }
                 }

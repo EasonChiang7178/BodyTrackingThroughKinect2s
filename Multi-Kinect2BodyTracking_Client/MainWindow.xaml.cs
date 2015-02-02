@@ -12,6 +12,8 @@ using Kinect2.Streams;
 using Kinect2.MultiKinects2BodyTracking.Client.TCPConnection;
 using Kinect2.MultiKinects2BodyTracking.Client.ThreadProcedures;
 
+using Kinect2.MultiKinects2BodyTracking.DataStructure;
+
 namespace Kinect2.MultiKinects2BodyTracking.Client
 {
     /// <summary>
@@ -51,6 +53,10 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
         private PrintTrackingResults printResults;
         private Thread printResultsThread;
         public bool printResultThreadAlive = false;
+
+        public KinectData fusedKinectParameter = new KinectData();
+        public KinectData kinectParameter_global = new KinectData();
+        public KinectData kinectparameters_local = new KinectData();
 
         /* About UI control */
         /// <summary>
@@ -153,8 +159,8 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
                     /* Extract the client ID from the message of server */
                     string[] temp = serverFeedback.Split(' ');
                     this.Title += "ID :" + temp[3];
-                    kinectID = Int32.Parse(temp[3]);
-                    kinectparameters_local.kinectID = kinectID;
+                    //kinectID = Int32.Parse(temp[3]);
+                    kinectparameters_local.kinectID = Int32.Parse(temp[3]);
 
                     Thread.Sleep(200);
 
