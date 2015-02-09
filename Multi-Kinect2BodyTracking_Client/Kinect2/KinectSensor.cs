@@ -28,6 +28,11 @@ namespace Kinect2
         /// </summary>
         protected Dictionary<string, ImageStream> openedStreams = new Dictionary<string, ImageStream>();
 
+        /// <summary>
+        /// A dictionary used to store the opened stream with data of bodies accessible
+        /// </summary>
+        protected Dictionary<string, DataProduction<Body[]>> openedBodyStreams = new Dictionary<string, DataProduction<Body[]>>();
+
         #endregion
 
         #region Properties
@@ -38,6 +43,17 @@ namespace Kinect2
                     return openedStreams[streamName].ImageSource;
 
                 throw new StreamHasNotBeenOpened(streamName);
+            }
+        }
+
+        public Body[] Bodies {
+            get {
+                if (openedBodyStreams.ContainsKey("BodyColorStream") == true)
+                    return openedBodyStreams["BodyColorStream"].DataSource;
+                if (openedBodyStreams.ContainsKey("BodyStream") == true)
+                    return openedBodyStreams["BodyStream"].DataSource;
+
+                throw new StreamHasNotBeenOpened("BodyStream");
             }
         }
 
@@ -64,6 +80,12 @@ namespace Kinect2
         public void AddStream< T >() where T : ImageStream {
             ImageStream newStream = (T) Activator.CreateInstance(typeof(T), new object[] { sensor });
             newStream.Open();
+
+            /* Test if implemented DataProduction<Body[]> */
+            DataProduction<Body[]> streamWithBody = newStream as DataProduction<Body[]>;
+            if (streamWithBody != null) {
+                openedBodyStreams.Add(newStream.StreamID, streamWithBody);
+            }
 
             openedStreams.Add(newStream.StreamID, newStream);
         }

@@ -54,6 +54,20 @@ namespace Kinect2.MultiKinects2BodyTracking.Client.ThreadProcedures {
         public void ThreadProc() {
             while (mw.updateResultThreadAlive == true)
             {
+                /* Get newest Body Data */
+                Microsoft.Kinect.Body[] currentBodies = mw.Bodies;               
+                int index = 0;
+                foreach(Microsoft.Kinect.Body currentbody in currentBodies) {
+                    if(currentbody.IsTracked) {
+                        mw.kinectparameters_local.skeletonArray[index].TrackingId = currentbody.TrackingId;
+                        mw.kinectparameters_local.skeletonArray[index].TrackingState = currentbody.LeanTrackingState;
+                        mw.kinectparameters_local.skeletonArray[index].Position = currentbody.Joints[Microsoft.Kinect.JointType.SpineShoulder].Position;
+                        foreach (Microsoft.Kinect.JointType jointType in Enum.GetValues(typeof(Microsoft.Kinect.JointType)))
+                            mw.kinectparameters_local.skeletonArray[index].Joints[jointType] = currentbody.Joints[jointType];
+                    }
+                    index++;
+                }
+
                 //log step time to txt
                 if (counting)
                     this.RecordFrameRate();
@@ -93,7 +107,7 @@ namespace Kinect2.MultiKinects2BodyTracking.Client.ThreadProcedures {
                         string[] ss = resultData.Split('#');
                         mw.fusedKinectParameter.AssignByAllParameterStringInBase64(ss[1]);
                     }
-                    catch (Exception ex) { /* Ignore failed data and continue */ }
+                    catch { /* Ignore failed data and continue */ }
                 }
             }
         }

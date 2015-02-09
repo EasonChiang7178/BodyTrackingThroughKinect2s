@@ -52,7 +52,7 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
 
         private PrintTrackingResults printResults;
         private Thread printResultsThread;
-        public bool printResultThreadAlive = false;
+        public bool printResultThreadAlive = true;
 
         public KinectData fusedKinectParameter = new KinectData();
         public KinectData kinectParameter_global = new KinectData();
@@ -70,6 +70,10 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
 
         public ImageSource ImageSource {
             get { return this.kinectSensor["BodyColorStream"]; }
+        }
+
+        public Microsoft.Kinect.Body[] Bodies {
+            get { return this.kinectSensor.Bodies; }
         }
 
         #endregion

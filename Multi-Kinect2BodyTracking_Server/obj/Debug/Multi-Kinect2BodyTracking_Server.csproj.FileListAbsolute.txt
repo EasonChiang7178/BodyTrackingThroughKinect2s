@@ -1,0 +1,9 @@
+C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Server\bin\Debug\Multi-Kinect2BodyTracking_Server.exe.config
+C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Server\obj\Debug\Multi-Kinect2BodyTracking_Server.csprojResolveAssemblyReference.cache
+C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Server\obj\Debug\MainWindow.baml
+C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Server\obj\Debug\MainWindow.g.cs
+C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Server\obj\Debug\App.g.cs
+C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Server\obj\Debug\Multi-Kinect2BodyTracking_Server_MarkupCompile.cache
+C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Server\obj\Debug\Multi-Kinect2BodyTracking_Server.g.resources
+C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Server\obj\Debug\Multi_Kinect2BodyTracking_Server.Properties.Resources.resources
+C:\Users\geminoid\Documents\Github\Multi-Kinect2BodyTracking_Client\Multi-Kinect2BodyTracking_Server\obj\Debug\Multi-Kinect2BodyTracking_Server.csproj.GenerateResource.Cache
