@@ -92,8 +92,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Kinect2\MultiKinects2BodyTracking\Client\TCPConnection\ConnectionCommands.cs" />
-    <Compile Include="Kinect2\MultiKinects2BodyTracking\Client\TCPConnection\TCPConnector.cs" />
+    <Compile Include="Kinect2\MultiKinects2BodyTracking\TCPConnection\ConnectionCommands.cs" />
+    <Compile Include="Kinect2\MultiKinects2BodyTracking\TCPConnection\TCPConnector.cs" />
     <Compile Include="Kinect2\MultiKinects2BodyTracking\Client\ThreadProcedures\PrintTrackingResults.cs" />
     <Compile Include="Kinect2\MultiKinects2BodyTracking\Client\ThreadProcedures\UpdateResultsToServer.cs" />
     <Compile Include="Kinect2\MultiKinects2BodyTracking\DataStructure\KinectData.cs" />

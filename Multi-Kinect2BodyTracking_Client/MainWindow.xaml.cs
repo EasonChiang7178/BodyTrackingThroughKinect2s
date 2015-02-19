@@ -9,7 +9,7 @@ using System.Threading;
 
 using Kinect2.Streams;
 
-using Kinect2.MultiKinects2BodyTracking.Client.TCPConnection;
+using Kinect2.MultiKinects2BodyTracking.TCPConnection;
 using Kinect2.MultiKinects2BodyTracking.Client.ThreadProcedures;
 
 using Kinect2.MultiKinects2BodyTracking.DataStructure;
@@ -69,7 +69,7 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
         #region Properties
 
         public ImageSource ImageSource {
-            get { return this.kinectSensor["BodyColorStream"]; }
+            get { return this.kinectSensor["BodyStream"]; }
         }
 
         public Microsoft.Kinect.Body[] Bodies {
@@ -85,7 +85,7 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
             /* Open the Kinect sensor */
             kinectSensor = KinectSensor.Instance;
                 // Initialize the stream we interested
-            kinectSensor.AddStream<BodyColorStream>();
+            kinectSensor.AddStream<BodyStream>();
                 // Run Kinect!
             kinectSensor.Open();
 
@@ -142,6 +142,7 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
                 /* Try to make the connection... */
                 try {
                     status_TextBlock.Text = "Connecting... " + serverIP;
+
                     /* Connect to server */
                     tcpConnector.ConnectToServer(serverIP);
 

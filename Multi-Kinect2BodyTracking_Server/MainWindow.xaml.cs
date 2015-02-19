@@ -3,36 +3,58 @@
 //For more information, please refer to user manual.
 //**************************************************************************************************
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Net;
-using System.Net.Sockets;
 using System.Threading;
-using KinectData;
 using _3DTools;
 
+using Kinect2.MultiKinects2BodyTracking.Server;
+using Kinect2.MultiKinects2BodyTracking.DataStructure;
 
 namespace Kinect2.MultiKinects2BodyTracking.Server {
     public partial class MainWindow : Window {
-        int kinectNUM = 0;
-        TextBox iniTxtBx = new TextBox();
-        Label iniLabel = new Label();
-        Grid iniGrid = new Grid();
+
+        #region Members
+
+        private int kinectNUM = 0;
+
         public static bool sendFusedDataToKinect = false;
         public static bool updateGUI = true;
 
         static private Object sendFusedDataLock = new Object();
         static private Object updateGUILock = new Object();
+
+        /* GUI components */
+        TextBox iniTxtBx = new TextBox();
+        Label iniLabel = new Label();
+        Grid iniGrid = new Grid();
+
+        #endregion // Members
+
+        #region Methods
+
+        public MainWindow() {
+            InitializeComponent();
+
+            /* Prompt the user to input the number of Kinects */
+            iniLabel.Content = "Input Kinect number and press enter";
+            iniLabel.Height = 30;
+            iniLabel.VerticalAlignment = VerticalAlignment.Top;
+
+            iniTxtBx.KeyDown += new KeyEventHandler(t_KeyDown);
+            iniTxtBx.Height = 30;
+            iniTxtBx.Margin = new Thickness(0, iniLabel.Height + 5, 0, 0);
+            iniTxtBx.VerticalAlignment = VerticalAlignment.Top;
+
+            iniGrid.Children.Add(iniLabel);
+            iniGrid.Children.Add(iniTxtBx);
+            iniGrid.Height = 100;
+            iniGrid.Width = 250;
+
+            this.Content = iniGrid;
+        }
 
         static public void setFusedDataToKinect(bool value) {
             lock (sendFusedDataLock) {
@@ -42,7 +64,6 @@ namespace Kinect2.MultiKinects2BodyTracking.Server {
 
         static public void setUpdateGUI(bool value) {
             lock (updateGUILock) {
-
                 updateGUI = value;
             }
         }
@@ -63,31 +84,15 @@ namespace Kinect2.MultiKinects2BodyTracking.Server {
             return value;
         }
 
+        #endregion // Methods
 
-        public MainWindow() {
-            InitializeComponent();
+        #region EventHandler
 
-            iniLabel.Content = "Input Kinect number and press enter";
-            iniLabel.Height = 30;
-            iniLabel.VerticalAlignment = VerticalAlignment.Top;
-
-            iniTxtBx.KeyDown += new KeyEventHandler(t_KeyDown);
-            iniTxtBx.Height = 30;
-            iniTxtBx.Margin = new Thickness(0, iniLabel.Height + 5, 0, 0);
-            iniTxtBx.VerticalAlignment = VerticalAlignment.Top;
-
-            iniGrid.Children.Add(iniLabel);
-            iniGrid.Children.Add(iniTxtBx);
-            iniGrid.Height = 100;
-            iniGrid.Width = 250;
-
-
-
-            this.Content = iniGrid;
-
-        }
-
-        //input kinect num when enter key is pressed
+        /// <summary>
+        /// Input kinect num when enter key is pressed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void t_KeyDown(object sender, KeyEventArgs e) {
             if (e.Key == Key.Enter) {
                 try {
@@ -111,27 +116,17 @@ namespace Kinect2.MultiKinects2BodyTracking.Server {
 
         }
 
-
-
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
             FusedDataProcessor.isWorking = false;
 
-            //  waiting for thread to close
-            for (int i = 0; i < 100; ++i) { Thread.Sleep(10); }
+                // Waiting for thread to close
+            for (int i = 0; i < 100; ++i)
+                Thread.Sleep(10);
 
-            //close all existing windows
+                // Close all existing windows
             App.Current.Shutdown();
         }
 
-
-    }
-
-    public class initWindow : Window {
-        public initWindow() {
-
-        }
-
-
-
+        #endregion // EventHandler
     }
 }

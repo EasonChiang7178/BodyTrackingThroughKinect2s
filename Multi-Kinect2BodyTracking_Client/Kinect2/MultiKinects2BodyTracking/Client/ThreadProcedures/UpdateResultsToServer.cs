@@ -3,7 +3,7 @@ using System.IO;
     // Using multi-threads
 using System.Threading;
 
-using Kinect2.MultiKinects2BodyTracking.Client.TCPConnection;
+using Kinect2.MultiKinects2BodyTracking.TCPConnection;
 using Kinect2.MultiKinects2BodyTracking.DataStructure;
 
 namespace Kinect2.MultiKinects2BodyTracking.Client.ThreadProcedures {
