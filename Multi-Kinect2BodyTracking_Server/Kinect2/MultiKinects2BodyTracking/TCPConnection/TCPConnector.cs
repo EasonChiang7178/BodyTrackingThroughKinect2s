@@ -18,8 +18,8 @@ namespace Kinect2.MultiKinects2BodyTracking.TCPConnection {
         /// <summary>
         /// The sockets constructed from .Net framework API
         /// </summary>
-        private System.Net.Sockets.TcpClient readingSocket = new System.Net.Sockets.TcpClient();
-        private System.Net.Sockets.TcpClient sendingSocket = new System.Net.Sockets.TcpClient();
+        private System.Net.Sockets.TcpClient readingSocket;
+        private System.Net.Sockets.TcpClient sendingSocket;
 
         /// <summary>
         /// Indicate which type of the client is
@@ -43,6 +43,14 @@ namespace Kinect2.MultiKinects2BodyTracking.TCPConnection {
         /// <param name="_clientType"></param>
         public TCPConnector(clientTypes _clientType) {
             clientType = (int) _clientType;
+        }
+
+        /// <summary>
+        /// Initialize the sockets to connect with other program
+        /// </summary>
+        public void SetupSockets() {
+            readingSocket = new System.Net.Sockets.TcpClient();
+            sendingSocket = new System.Net.Sockets.TcpClient();
         }
 
         /// <summary>

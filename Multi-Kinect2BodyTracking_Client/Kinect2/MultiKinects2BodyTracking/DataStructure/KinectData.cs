@@ -134,6 +134,7 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure {
         #endregion // Methods
     }
 
+    [Serializable]
     public class BodyData {
 
         #region Members
@@ -173,8 +174,8 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure {
 
             // Gets or sets the skeleton's current tracking state.
         public TrackingState TrackingState {
-            get { return TrackingState; }
-            set { TrackingState = value; }
+            get { return trackingState; }
+            set { trackingState = value; }
         }
 
         #endregion Properties
@@ -208,8 +209,17 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure {
 
         StringCompressor compressor = new StringCompressor();
         public int kinectID = -1;
-        
-        public BodyData[] skeletonArray;
+        public const int bodyCount = 6;
+
+        public BodyData[] skeletonArray = new BodyData[bodyCount]
+            {
+                new BodyData(),
+                new BodyData(),
+                new BodyData(),
+                new BodyData(),
+                new BodyData(),
+                new BodyData()
+            };
 
         #endregion // Members
 
@@ -324,7 +334,7 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure {
                             // 22*4 +4+1= 88+5=93 doubles <- WT...
                         if (sk == null)
                             continue;
-                        if (sk.TrackingState != TrackingState.NotTracked)
+                        if (sk.TrackingState == TrackingState.NotTracked)
                             continue;
 
                         s += sk.TrackingId + "*";

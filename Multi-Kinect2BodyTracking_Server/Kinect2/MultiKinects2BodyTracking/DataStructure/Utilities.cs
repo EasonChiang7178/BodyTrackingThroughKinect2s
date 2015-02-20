@@ -112,7 +112,7 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure
 
                 string result = Convert.ToBase64String(gzBuffer);
 
-                result = result.TrimEnd('=');
+                //result = result.TrimEnd('=');
                 return result;
 
             }

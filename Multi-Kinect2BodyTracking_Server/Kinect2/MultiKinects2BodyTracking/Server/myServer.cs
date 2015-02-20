@@ -794,7 +794,7 @@ namespace Kinect2.MultiKinects2BodyTracking.Server {
                                         isWorking = false;
 
                                         server.clientList.Remove(cc);
-                                        server.updateServerMsg(getTypeString(clientType) + clientID + "is Disconnected!");
+                                        server.updateServerMsg(getTypeString(clientType) + clientID + " is Disconnected!");
                                         return true;
                                     }
 
@@ -814,19 +814,17 @@ namespace Kinect2.MultiKinects2BodyTracking.Server {
             }
 
             delegate void updateKinectInfouCallback(string text);
-            public void updateKinectInfo(string text)
-            {
-                if (!MainWindow.getUpdateGUI()) return;
+            public void updateKinectInfo(string text) {
+                if (!MainWindow.getUpdateGUI())
+                    return;
 
-                if (clientType != (int)clientTypes.KINECT) return;
+                if (clientType != (int)clientTypes.KINECT)
+                    return;
+
                 if (this.parentGUI.kinectCompList[clientID].g.Dispatcher.Thread != Thread.CurrentThread)
-                {
                     this.parentGUI.kinectCompList[clientID].g.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new updateKinectInfouCallback(this.updateKinectInfo), text);
-                }
-                else
-                {
-                    //print kinect parameters on GUI
-                    
+                else {
+                    /* print kinect parameters on GUI */
                     this.parentGUI.kinectCompList[clientID].infoTextBlock.Text = "[Kinect " + clientID + "]" + Environment.NewLine
                         + kinectParameter.printKinectParameters() + Environment.NewLine;
                 }

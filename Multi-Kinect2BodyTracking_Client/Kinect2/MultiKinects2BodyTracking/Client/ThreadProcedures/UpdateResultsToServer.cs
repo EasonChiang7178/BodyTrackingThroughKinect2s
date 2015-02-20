@@ -54,14 +54,19 @@ namespace Kinect2.MultiKinects2BodyTracking.Client.ThreadProcedures {
         public void ThreadProc() {
             while (mw.updateResultThreadAlive == true)
             {
-                /* Get newest Body Data */
-                Microsoft.Kinect.Body[] currentBodies = mw.Bodies;               
+                /* Get newest BodyData */
+                Microsoft.Kinect.Body[] currentBodies = mw.Bodies;
+
+                mw.kinectparameters_local.skeletonArray = new BodyData[6] {
+                    new BodyData(), new BodyData(), new BodyData(), new BodyData(), new BodyData(), new BodyData()
+                };
+
                 int index = 0;
                 foreach(Microsoft.Kinect.Body currentbody in currentBodies) {
                     if(currentbody.IsTracked) {
                         mw.kinectparameters_local.skeletonArray[index].TrackingId = currentbody.TrackingId;
                         mw.kinectparameters_local.skeletonArray[index].TrackingState = currentbody.LeanTrackingState;
-                        mw.kinectparameters_local.skeletonArray[index].Position = currentbody.Joints[Microsoft.Kinect.JointType.SpineShoulder].Position;
+                        mw.kinectparameters_local.skeletonArray[index].Position = currentbody.Joints[Microsoft.Kinect.JointType.SpineMid].Position;
                         foreach (Microsoft.Kinect.JointType jointType in Enum.GetValues(typeof(Microsoft.Kinect.JointType)))
                             mw.kinectparameters_local.skeletonArray[index].Joints[jointType] = currentbody.Joints[jointType];
                     }
@@ -89,6 +94,10 @@ namespace Kinect2.MultiKinects2BodyTracking.Client.ThreadProcedures {
 
                 /* Send command to update data to server */
                 action = (int) UploadCommands.Update_knect_data_in_Base64_format;
+                string dataTemp = "TEST";
+                StringCompressor a = new StringCompressor();
+                string temp = a.Compress(dataTemp);
+                string dataTemp2 = a.Decompress(temp);
                 dataToSend = "u " + action.ToString() + " " + mw.kinectparameters_local.GetAllParameterStringInBase64();
                 mw.tcpConnector.SendData(dataToSend);
 

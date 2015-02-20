@@ -108,14 +108,15 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
         /// <param name="sender">object sending the event</param>
         /// <param name="e">event arguments</param>
         private void MainWindow_Closing(object sender, CancelEventArgs e) {
-            this.kinectSensor.Close();
-
-            this.printResultThreadAlive = false;
             if (this.updateResultThreadAlive) {
                 e.Cancel = true;
-                this.updateResultThreadAlive = false;
+                //this.updateResultThreadAlive = false;
                 MessageBox.Show("Please disconnect before closing");
+                return;
             }
+
+            this.kinectSensor.Close();
+            this.printResultThreadAlive = false;
         }
 
         ///// <summary>
@@ -144,6 +145,7 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
                     status_TextBlock.Text = "Connecting... " + serverIP;
 
                     /* Connect to server */
+                    tcpConnector.SetupSockets();
                     tcpConnector.ConnectToServer(serverIP);
 
                     status_TextBlock.Text = "Connected!";
@@ -152,6 +154,8 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
                     string serverFeedback = "";
                     while (serverFeedback == "")
                         serverFeedback = tcpConnector.ReceiveData_wait();
+
+                    Thread.Sleep(100);
 
                     /* Tell the server this client type */
                     tcpConnector.SendData(tcpConnector.clientType.ToString());
