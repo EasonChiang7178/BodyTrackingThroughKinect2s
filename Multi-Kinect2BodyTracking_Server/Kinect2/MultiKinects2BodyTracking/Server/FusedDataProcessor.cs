@@ -182,7 +182,7 @@ namespace Kinect2.MultiKinects2BodyTracking.Server {
 
             //2. compute weightings 
             for (int thisKinect = 0; thisKinect < skeleNum; ++thisKinect) {
-                if(skeleList[thisKinect].TrackingState == TrackingState.Tracked) {
+                if(skeleList[thisKinect].TrackingState != TrackingState.Tracked) {
                     weight[thisKinect] = 0;
                     continue;
                 }

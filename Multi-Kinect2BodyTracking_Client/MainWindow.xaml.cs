@@ -55,7 +55,6 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
         public bool printResultThreadAlive = true;
 
         public KinectData fusedKinectParameter = new KinectData();
-        public KinectData kinectParameter_global = new KinectData();
         public KinectData kinectparameters_local = new KinectData();
 
         /* About UI control */

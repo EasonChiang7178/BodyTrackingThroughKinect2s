@@ -404,15 +404,16 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure {
             {
                 t += "---------Print Kinect parameters---------" + Environment.NewLine;
 
-                t += "<skeleton tracking>" + Environment.NewLine;
+                t += "<skeleton tracking>" + Environment.NewLine + Environment.NewLine;
                 if (skeletonArray != null) {
                     for (int i = 0; i < skeletonArray.Length; ++i) {
                         if (skeletonArray[i] == null)
                             continue;
                         if (skeletonArray[i].TrackingState != TrackingState.NotTracked) {
-                            t += Environment.NewLine + "skeleton " + skeletonArray[i].TrackingId + ":" + skeletonArray[i].TrackingState + " ";
+                            t += "ID: " + skeletonArray[i].TrackingId +
+                                 Environment.NewLine + "Status: " + skeletonArray[i].TrackingState;
 
-                            t += skeletonArray[i].Position.X.ToString("F2") + " " + skeletonArray[i].Position.Y.ToString("F2") + " " + skeletonArray[i].Position.Z.ToString("F2") + Environment.NewLine;
+                            t += Environment.NewLine + "Position: " + skeletonArray[i].Position.X.ToString("F2") + " " + skeletonArray[i].Position.Y.ToString("F2") + " " + skeletonArray[i].Position.Z.ToString("F2") + Environment.NewLine + Environment.NewLine;
                         }
                     }
                 }
