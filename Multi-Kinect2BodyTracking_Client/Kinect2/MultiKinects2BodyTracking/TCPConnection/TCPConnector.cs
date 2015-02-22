@@ -70,66 +70,23 @@ namespace Kinect2.MultiKinects2BodyTracking.TCPConnection {
             if (string.IsNullOrEmpty(dataToSend))
                 return;
 
-            try {
-                if (dataToSend == "image data") {
-                    //isRecordingImage = true;
-                } else {
-                    NetworkStream serverStream = sendingSocket.GetStream();
-                    serverStream.Flush();
+            NetworkStream serverStream = sendingSocket.GetStream();
+            serverStream.Flush();
 
-                        // Transfer data string to Bytes[]
-                    Byte[] sendBytes = Encoding.ASCII.GetBytes(dataToSend);
+                // Transfer data string to Bytes[]
+            Byte[] sendBytes = Encoding.ASCII.GetBytes(dataToSend);
 
-                        // Get data length
-                    int dataLength = sendBytes.Length;
-                    Byte[] dataLengthBytes = System.BitConverter.GetBytes(dataLength);
+                // Get data length
+            int dataLength = sendBytes.Length;
+            Byte[] dataLengthBytes = System.BitConverter.GetBytes(dataLength);
 
-                        // Send data length
-                    serverStream.Write(dataLengthBytes, 0, dataLengthBytes.Length);
-                    serverStream.Flush();
+                // Send data length
+            serverStream.Write(dataLengthBytes, 0, dataLengthBytes.Length);
+            serverStream.Flush();
 
-                        // Send data body
-                    serverStream.Write(sendBytes, 0, sendBytes.Length);
-                    serverStream.Flush();
-                }
-
-                // Send image data
-                //if (imageAvaliable) {
-                //    imageAvaliable = false;
-
-                //    int action = (int) UploadCommands.Update_raw_data;
-                //    dataToSend = "u " + action.ToString() + " ";
-
-                //    byte[] depthBytes = new byte[Depth.Length * sizeof(short)];
-                //    Buffer.BlockCopy(Depth, 0, depthBytes, 0, Depth.Length * sizeof(short));
-
-                //    byte[] points3DBytes = new byte[Depth.Length * 3 * sizeof(float)];
-                //    Buffer.BlockCopy(points3D, 0, points3DBytes, 0, Depth.Length * 3 * sizeof(float));
-
-                //        //append RGB data, depth data, and 3D point data to dataToSend string 
-                //    StringCompressor s = new StringCompressor();
-                //    dataToSend += s.CompressByteArray(RGB) + "*" + s.CompressByteArray(depthBytes) + "*" + s.CompressByteArray(points3DBytes);
-
-                //    NetworkStream serverStream = sendingSocket.GetStream();
-                //    serverStream.Flush();
-
-                //    Byte[] sendBytes = Encoding.ASCII.GetBytes(dataToSend);
-
-                //    int dataLength = sendBytes.Length;
-                //    Byte[] dataLengthBytes = System.BitConverter.GetBytes(dataLength);
-
-                //        //send data length
-                //    serverStream.Write(dataLengthBytes, 0, dataLengthBytes.Length);
-                //    serverStream.Flush();
-
-                //    Thread.Sleep(1000);
-                //    //send data body
-                //    serverStream.Write(sendBytes, 0, sendBytes.Length);
-                //    serverStream.Flush();
-                //}
-            } catch (Exception ex)  {
-                MessageBox.Show(ex.ToString());
-            }
+                // Send data body
+            serverStream.Write(sendBytes, 0, sendBytes.Length);
+            serverStream.Flush();    
         }
 
         /// <summary>

@@ -402,7 +402,7 @@ namespace Kinect2.MultiKinects2BodyTracking.DataStructure {
             string t = "";
             try
             {
-                t += "---------Print Kinect parameters---------" + Environment.NewLine;
+                //t += "---------Print Kinect parameters---------" + Environment.NewLine;
 
                 t += "<skeleton tracking>" + Environment.NewLine + Environment.NewLine;
                 if (skeletonArray != null) {

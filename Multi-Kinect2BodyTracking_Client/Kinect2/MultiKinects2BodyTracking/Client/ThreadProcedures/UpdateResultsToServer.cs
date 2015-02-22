@@ -1,7 +1,12 @@
 ﻿using System;
 using System.IO;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Runtime.InteropServices.WindowsRuntime;
     // Using multi-threads
 using System.Threading;
+
+using Microsoft.Kinect;
 
 using Kinect2.MultiKinects2BodyTracking.TCPConnection;
 using Kinect2.MultiKinects2BodyTracking.DataStructure;
@@ -81,23 +86,26 @@ namespace Kinect2.MultiKinects2BodyTracking.Client.ThreadProcedures {
                 string dataToSend, resultData;
 
                 /* If the server asks for image data, send it */
-                // Receive data from server
+                    // Receive data from server
                 resultData = mw.tcpConnector.ReceiveData_wait();
+                StringCompressor a = new StringCompressor();
 
-                try
-                {
+                try {
                     string[] s = resultData.Split(' ');
-                    if (int.Parse(s[1]) == (int) DownloadCommands.Get_all_kinect_images)
-                        mw.tcpConnector.SendData("image data");
-                }
-                catch { }
+                    if (int.Parse(s[1]) == (int)DownloadCommands.Get_all_kinect_images) {
+                        PrepareImageData();
+
+                        action = (int)UploadCommands.Update_raw_data;
+                        dataToSend = "u " + action.ToString() + " ";
+
+                        //append RGB data, depth data, and 3D point data to dataToSend string
+                        dataToSend += a.CompressByteArray(mw.colorData) + "*" + a.CompressByteArray(mw.depthData) + "*" + a.CompressByteArray(mw.depthPointsInColorCoordinate);
+                        mw.tcpConnector.SendData(dataToSend);
+                    }
+                } catch { }
 
                 /* Send command to update data to server */
                 action = (int) UploadCommands.Update_knect_data_in_Base64_format;
-                string dataTemp = "TEST";
-                StringCompressor a = new StringCompressor();
-                string temp = a.Compress(dataTemp);
-                string dataTemp2 = a.Decompress(temp);
                 dataToSend = "u " + action.ToString() + " " + mw.kinectparameters_local.GetAllParameterStringInBase64();
                 mw.tcpConnector.SendData(dataToSend);
 
@@ -119,6 +127,55 @@ namespace Kinect2.MultiKinects2BodyTracking.Client.ThreadProcedures {
                     catch { /* Ignore failed data and continue */ }
                 }
             }
+        }
+
+        /// <summary>
+        /// Prepare image data to send
+        /// </summary>
+        /// <param name="depthImageFrame"></param>
+        /// <returns></returns>
+        private bool PrepareImageData() {
+            ImageSource b = mw.ImageSource;
+            BitmapImage a = mw.ImageSource as BitmapImage;
+            mw.colorData = BufferFromImage(a);
+            mw.depthData = BufferFromImage(mw.DepthSource as BitmapImage);
+            float[] pointTemp = new float[1920 * 1080 * 3]; //3 dimension
+
+            CameraSpacePoint[] cameraSpacePoints = new CameraSpacePoint[1920 * 1080];
+            ushort[] depthData = new ushort[512 * 424];
+
+            Microsoft.Kinect.KinectSensor sensor = Microsoft.Kinect.KinectSensor.GetDefault();
+            DepthFrameReader e = sensor.DepthFrameSource.OpenReader();
+            DepthFrame eFrame = e.AcquireLatestFrame();
+            eFrame.CopyFrameDataToArray(depthData);
+
+                //get 3D point coordinates
+            CoordinateMapper coordinateMapper = sensor.CoordinateMapper;
+            coordinateMapper.MapColorFrameToCameraSpace(depthData, cameraSpacePoints);
+
+                //save 3D point coordinates to point3D array
+            for (int i = 0; i < 1920 * 1080; ++i) {
+                pointTemp[i * 3] = cameraSpacePoints[i].X;
+                pointTemp[i * 3 + 1] = cameraSpacePoints[i].Y;
+                pointTemp[i * 3 + 2] = cameraSpacePoints[i].Z;
+            }
+
+            byte[] depthPointsInColorCoordinate = new byte[1920 * 1080 * 3 * sizeof(float)];
+            Buffer.BlockCopy(pointTemp, 0, depthPointsInColorCoordinate, 0, 1920 * 1080 * 3 * sizeof(float));
+
+            return true;
+        }
+
+        public Byte[] BufferFromImage(BitmapImage imageSource) {
+            Stream stream = imageSource.StreamSource;
+            Byte[] buffer = null;
+            if (stream != null && stream.Length > 0) {
+                using (BinaryReader br = new BinaryReader(stream)) {
+                    buffer = br.ReadBytes((Int32)stream.Length);
+                }
+            }
+
+            return buffer;
         }
 
         #endregion // Methods

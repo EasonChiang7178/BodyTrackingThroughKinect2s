@@ -45,7 +45,7 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
         /// </summary>
         public TCPConnector tcpConnector;
 
-        ///* About the data updata thread */
+        /* About the data updata thread */
         private UpdateResultsToServer updateResults;
         private Thread updateResultsThread;
         public bool updateResultThreadAlive = false;
@@ -56,6 +56,11 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
 
         public KinectData fusedKinectParameter = new KinectData();
         public KinectData kinectparameters_local = new KinectData();
+
+        /* The image data use to be displayed in the server */
+        public byte[] colorData;
+        public byte[] depthData;
+        public byte[] depthPointsInColorCoordinate;
 
         /* About UI control */
         /// <summary>
@@ -68,6 +73,14 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
         #region Properties
 
         public ImageSource ImageSource {
+            get { return this.kinectSensor["ColorStream"]; }
+        }
+
+        public ImageSource DepthSource {
+            get { return this.kinectSensor["DepthStream"]; }
+        }
+
+        public ImageSource BodyImageSource {
             get { return this.kinectSensor["BodyStream"]; }
         }
 
@@ -85,6 +98,8 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
             kinectSensor = KinectSensor.Instance;
                 // Initialize the stream we interested
             kinectSensor.AddStream<BodyStream>();
+            kinectSensor.AddStream<ColorStream>();
+            kinectSensor.AddStream<DepthStream>();
                 // Run Kinect!
             kinectSensor.Open();
 

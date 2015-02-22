@@ -825,27 +825,23 @@ namespace Kinect2.MultiKinects2BodyTracking.Server
             delegate void updateKinectImagesCallback(string imageData);
             public void updateKinectImages(string imageData)
             {
+                if (!MainWindow.getUpdateGUI())
+                    return;
 
-                if (!MainWindow.getUpdateGUI()) return;
                 if (this.rgbImg.Dispatcher.Thread != Thread.CurrentThread)
-                {
                     this.rgbImg.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new updateKinectImagesCallback(this.updateKinectImages), imageData);
-                }
-                else
-                {
-                    try
-                    {
+                else {
+                    try {
                         string[] imageDatas = imageData.Split('*');
                         StringCompressor s = new StringCompressor();
                         byte[] rgbData = s.DecompressByteArray(imageDatas[0]);
                         byte[] depthDataByte = s.DecompressByteArray(imageDatas[1]);
 
-                        if (rgbData == null || depthDataByte == null)
-                        {
+                        if (rgbData == null || depthDataByte == null) {
                             this.infoTextBlock.Text = "Image reading ERROR!!" + Environment.NewLine + this.infoTextBlock.Text;
                             return;
-
                         }
+
                         short[] depthData = new short[depthDataByte.Length / 2];
                         Buffer.BlockCopy(depthDataByte, 0, depthData, 0, depthDataByte.Length);
 
@@ -862,12 +858,8 @@ namespace Kinect2.MultiKinects2BodyTracking.Server
                         point3DArray = new float[point3DDataByte.Length * 3];
                         Buffer.BlockCopy(point3DDataByte, 0, point3DArray, 0, point3DDataByte.Length);
 
-
                         if (parentGUI.cali != null)
-                        {
-
                             parentGUI.cali.updateImages();
-                        }
                     }
                     catch { }
                 }
