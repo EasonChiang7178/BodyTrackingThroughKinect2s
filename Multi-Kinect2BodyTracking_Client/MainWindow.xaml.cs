@@ -1,11 +1,16 @@
 ﻿using System;
+using System.IO;
+using System.Drawing;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Runtime.InteropServices;
     // Using multi-threads
 using System.Threading;
+
+using Microsoft.Kinect;
 
 using Kinect2.Streams;
 
@@ -133,6 +138,64 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
             this.printResultThreadAlive = false;
         }
 
+        /// <summary>
+        /// Prepare image data to send
+        /// </summary>
+        /// <param name="depthImageFrame"></param>
+        /// <returns></returns>
+        public bool PrepareImageData() {
+            Bitmap colorBitmapImg = BitmapSourceToBitmap2(this.ImageSource as BitmapSource);
+            Bitmap depthBitmapImg = BitmapSourceToBitmap2(this.DepthSource as BitmapSource);
+            
+            ImageConverter converter = new ImageConverter();
+            this.colorData = (byte[])converter.ConvertTo(colorBitmapImg, typeof(byte[]));
+            this.depthData = (byte[])converter.ConvertTo(depthBitmapImg, typeof(byte[]));
+            float[] pointTemp = new float[1920 * 1080 * 3]; //3 dimension
+
+            CameraSpacePoint[] cameraSpacePoints = new CameraSpacePoint[1920 * 1080];
+            ushort[] depthData = new ushort[512 * 424];
+
+            Microsoft.Kinect.KinectSensor sensor = Microsoft.Kinect.KinectSensor.GetDefault();
+            DepthFrameReader e = sensor.DepthFrameSource.OpenReader();
+            DepthFrame eFrame = e.AcquireLatestFrame();
+            eFrame.CopyFrameDataToArray(depthData);
+
+            //get 3D point coordinates
+            CoordinateMapper coordinateMapper = sensor.CoordinateMapper;
+            coordinateMapper.MapColorFrameToCameraSpace(depthData, cameraSpacePoints);
+
+            //save 3D point coordinates to point3D array
+            for (int i = 0; i < 1920 * 1080; ++i) {
+                pointTemp[i * 3] = cameraSpacePoints[i].X;
+                pointTemp[i * 3 + 1] = cameraSpacePoints[i].Y;
+                pointTemp[i * 3 + 2] = cameraSpacePoints[i].Z;
+            }
+
+            depthPointsInColorCoordinate = new byte[1920 * 1080 * 3 * sizeof(float)];
+            Buffer.BlockCopy(pointTemp, 0, depthPointsInColorCoordinate, 0, 1920 * 1080 * 3 * sizeof(float));
+
+            return true;
+        }
+
+        public static System.Drawing.Bitmap BitmapSourceToBitmap2(BitmapSource srs) {
+            int width = srs.PixelWidth;
+            int height = srs.PixelHeight;
+            int stride = width * ((srs.Format.BitsPerPixel + 7) / 8);
+            IntPtr ptr = IntPtr.Zero;
+            try {
+                ptr = Marshal.AllocHGlobal(height * stride);
+                srs.CopyPixels(new Int32Rect(0, 0, width, height), ptr, height * stride, stride);
+                using (var btm = new System.Drawing.Bitmap(width, height, stride, System.Drawing.Imaging.PixelFormat.Format1bppIndexed, ptr)) {
+                    // Clone the bitmap so that we can dispose it and
+                    // release the unmanaged memory at ptr
+                    return new System.Drawing.Bitmap(btm);
+                }
+            } finally {
+                if (ptr != IntPtr.Zero)
+                    Marshal.FreeHGlobal(ptr);
+            }
+        }
+
         ///// <summary>
         ///// INotifyPropertyChangedPropertyChanged event to allow window controls to bind to changeable data
         ///// </summary>
@@ -209,7 +272,7 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
                     /* Control the appearance of UI */
                     serverIP_TextBox.IsEnabled = false;
                     connect_Button.Content = "Disconnect";
-                    connect_Button.Background = Brushes.LightPink;
+                    connect_Button.Background = System.Windows.Media.Brushes.LightPink;
 
                 } catch (Exception ex) {
                     status_TextBlock.Text = "Connection failed! : " + ex.ToString();
@@ -239,7 +302,7 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
                     /* Control the appearance of UI */
                     serverIP_TextBox.IsEnabled = true;
                     connect_Button.Content = "Connect";
-                    connect_Button.Background = Brushes.LightGreen;
+                    connect_Button.Background = System.Windows.Media.Brushes.LightGreen;
 
                     status_TextBlock.Text = "Disconnected";
                 } catch (Exception ex) {

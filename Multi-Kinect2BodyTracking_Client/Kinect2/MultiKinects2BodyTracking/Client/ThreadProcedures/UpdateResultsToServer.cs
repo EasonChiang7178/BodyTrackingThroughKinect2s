@@ -22,7 +22,7 @@ namespace Kinect2.MultiKinects2BodyTracking.Client.ThreadProcedures {
         /// <summary>
         /// MainWindow of the current application
         /// </summary>
-        private MainWindow mw;
+        public MainWindow mw;
 
         /// <summary>
         /// Used to log the timestamp
@@ -129,53 +129,12 @@ namespace Kinect2.MultiKinects2BodyTracking.Client.ThreadProcedures {
             }
         }
 
-        /// <summary>
-        /// Prepare image data to send
-        /// </summary>
-        /// <param name="depthImageFrame"></param>
-        /// <returns></returns>
-        private bool PrepareImageData() {
-            ImageSource b = mw.ImageSource;
-            BitmapImage a = mw.ImageSource as BitmapImage;
-            mw.colorData = BufferFromImage(a);
-            mw.depthData = BufferFromImage(mw.DepthSource as BitmapImage);
-            float[] pointTemp = new float[1920 * 1080 * 3]; //3 dimension
-
-            CameraSpacePoint[] cameraSpacePoints = new CameraSpacePoint[1920 * 1080];
-            ushort[] depthData = new ushort[512 * 424];
-
-            Microsoft.Kinect.KinectSensor sensor = Microsoft.Kinect.KinectSensor.GetDefault();
-            DepthFrameReader e = sensor.DepthFrameSource.OpenReader();
-            DepthFrame eFrame = e.AcquireLatestFrame();
-            eFrame.CopyFrameDataToArray(depthData);
-
-                //get 3D point coordinates
-            CoordinateMapper coordinateMapper = sensor.CoordinateMapper;
-            coordinateMapper.MapColorFrameToCameraSpace(depthData, cameraSpacePoints);
-
-                //save 3D point coordinates to point3D array
-            for (int i = 0; i < 1920 * 1080; ++i) {
-                pointTemp[i * 3] = cameraSpacePoints[i].X;
-                pointTemp[i * 3 + 1] = cameraSpacePoints[i].Y;
-                pointTemp[i * 3 + 2] = cameraSpacePoints[i].Z;
-            }
-
-            byte[] depthPointsInColorCoordinate = new byte[1920 * 1080 * 3 * sizeof(float)];
-            Buffer.BlockCopy(pointTemp, 0, depthPointsInColorCoordinate, 0, 1920 * 1080 * 3 * sizeof(float));
-
-            return true;
-        }
-
-        public Byte[] BufferFromImage(BitmapImage imageSource) {
-            Stream stream = imageSource.StreamSource;
-            Byte[] buffer = null;
-            if (stream != null && stream.Length > 0) {
-                using (BinaryReader br = new BinaryReader(stream)) {
-                    buffer = br.ReadBytes((Int32)stream.Length);
-                }
-            }
-
-            return buffer;
+        delegate void PrepareImageDataCallback();
+        public void PrepareImageData() {
+            if (mw.Dispatcher.Thread != Thread.CurrentThread)
+                mw.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new PrepareImageDataCallback(this.PrepareImageData));
+            else
+                mw.PrepareImageData();
         }
 
         #endregion // Methods
