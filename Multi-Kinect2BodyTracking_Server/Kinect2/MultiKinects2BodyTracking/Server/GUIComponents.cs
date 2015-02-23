@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Drawing;
 using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Media.Media3D;
@@ -664,7 +663,7 @@ namespace Kinect2.MultiKinects2BodyTracking.Server
             {
                 System.Windows.Point p = e.GetPosition(rgbImg);
 
-                int index = (int)(p.X * (WIDTH / rgbImg.Width) + p.Y * (WIDTH / rgbImg.Width) * WIDTH) * 3;
+                int index = (int)(p.X * (1920 / rgbImg.Width) + p.Y * (1920 / rgbImg.Width) * 1920) * 3;
 
                 if (point3DArray[index + 2] == 0)
                     return;
@@ -843,22 +842,7 @@ namespace Kinect2.MultiKinects2BodyTracking.Server
                             return;
                         }
 
-                        //System.Drawing.Bitmap colorBmp, depthBmp;
-                        //using (System.IO.MemoryStream ms = new System.IO.MemoryStream(rgbData)) {
-                        //    colorBmp = new System.Drawing.Bitmap(ms);
-                        //    ms.Close();
-                        //}
-                        //using (System.IO.MemoryStream ms = new System.IO.MemoryStream(depthDataByte)) {
-                        //    depthBmp = new System.Drawing.Bitmap(ms);
-                        //    ms.Close();
-                        //}
-
-                        //this.colorImageWritableBitmap = (WriteableBitmap)Imaging.CreateBitmapSourceFromBitmap(colorBmp);
-                        //this.depthImageWritableBitmap = (WriteableBitmap)Imaging.CreateBitmapSourceFromBitmap(depthBmp);
-
-                        //ushort[] depthData = new ushort[depthDataByte.Length / 2 + 1];
-                        //Buffer.BlockCopy(depthDataByte, 0, depthData, 0, depthDataByte.Length);
-
+                        /* Transfer Byte Array Data back to WriteableBitmap*/
                         this.colorImageWritableBitmap.WritePixels(
                             new Int32Rect(0, 0, 1920, 1080), rgbData, 7680, 0);
 
@@ -875,7 +859,9 @@ namespace Kinect2.MultiKinects2BodyTracking.Server
                         if (parentGUI.cali != null)
                             parentGUI.cali.updateImages();
                     }
-                    catch { }
+                    catch {
+                        this.infoTextBlock.Text = "Image reading ERROR!!" + Environment.NewLine + this.infoTextBlock.Text;
+                    }
                 }
             }
 

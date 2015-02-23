@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Drawing;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -157,11 +156,6 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
             colorBitmap.CopyPixels(this.colorData, colorBitmap.BackBufferStride, 0);
             depthBitmap.CopyPixels(this.depthData, depthBitmap.BackBufferStride, 0);
 
-            //Bitmap colorBitmapImg = BitmapSourceToBitmap2(this.ImageSource as BitmapSource);
-            //Bitmap depthBitmapImg = BitmapSourceToBitmap2(this.DepthSource as BitmapSource);
-
-            //this.colorData = ImageToByte2(colorBitmapImg);
-            //this.depthData = ImageToByte2(depthBitmapImg);
             float[] pointTemp = new float[1920 * 1080 * 3]; //3 dimension
 
             CameraSpacePoint[] cameraSpacePoints = new CameraSpacePoint[1920 * 1080];
@@ -172,11 +166,11 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
             DepthFrame eFrame = e.AcquireLatestFrame();
             eFrame.CopyFrameDataToArray(depthData);
 
-            //get 3D point coordinates
+                // Get 3D point coordinates
             CoordinateMapper coordinateMapper = sensor.CoordinateMapper;
             coordinateMapper.MapColorFrameToCameraSpace(depthData, cameraSpacePoints);
 
-            //save 3D point coordinates to point3D array
+                // Save 3D point coordinates to point3D array
             for (int i = 0; i < 1920 * 1080; ++i) {
                 pointTemp[i * 3] = cameraSpacePoints[i].X;
                 pointTemp[i * 3 + 1] = cameraSpacePoints[i].Y;
@@ -187,36 +181,6 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
             Buffer.BlockCopy(pointTemp, 0, depthPointsInColorCoordinate, 0, 1920 * 1080 * 3 * sizeof(float));
 
             return true;
-        }
-
-        public static byte[] ImageToByte2(System.Drawing.Image img) {
-            byte[] byteArray = new byte[0];
-            using (MemoryStream stream = new MemoryStream()) {
-                img.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                stream.Close();
-
-                byteArray = stream.ToArray();
-            }
-            return byteArray;
-        }
-
-        public static System.Drawing.Bitmap BitmapSourceToBitmap2(BitmapSource srs) {
-            int width = srs.PixelWidth;
-            int height = srs.PixelHeight;
-            int stride = width * ((srs.Format.BitsPerPixel + 7) / 8);
-            IntPtr ptr = IntPtr.Zero;
-            try {
-                ptr = Marshal.AllocHGlobal(height * stride);
-                srs.CopyPixels(new Int32Rect(0, 0, width, height), ptr, height * stride, stride);
-                using (var btm = new System.Drawing.Bitmap(width, height, stride, System.Drawing.Imaging.PixelFormat.Format1bppIndexed, ptr)) {
-                    // Clone the bitmap so that we can dispose it and
-                    // release the unmanaged memory at ptr
-                    return new System.Drawing.Bitmap(btm);
-                }
-            } finally {
-                if (ptr != IntPtr.Zero)
-                    Marshal.FreeHGlobal(ptr);
-            }
         }
 
         ///// <summary>

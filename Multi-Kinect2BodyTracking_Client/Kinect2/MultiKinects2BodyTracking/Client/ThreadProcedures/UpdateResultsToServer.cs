@@ -101,6 +101,7 @@ namespace Kinect2.MultiKinects2BodyTracking.Client.ThreadProcedures {
                         //append RGB data, depth data, and 3D point data to dataToSend string
                         dataToSend += a.CompressByteArray(mw.colorData) + "*" + a.CompressByteArray(mw.depthData) + "*" + a.CompressByteArray(mw.depthPointsInColorCoordinate);
                         mw.tcpConnector.SendData(dataToSend);
+                        Thread.Sleep(50);
                     }
                 } catch { }
 
