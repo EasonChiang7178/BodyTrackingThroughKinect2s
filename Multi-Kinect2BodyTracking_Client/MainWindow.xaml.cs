@@ -73,6 +73,10 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
         /// </summary>
         public bool isConnectingToServer = false;
 
+        private static readonly int bgr32BytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
+        private static readonly int gray8BytesPerPixel = (PixelFormats.Gray8.BitsPerPixel + 7) / 8;
+
+
         #endregion 
 
         #region Properties
@@ -144,12 +148,20 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
         /// <param name="depthImageFrame"></param>
         /// <returns></returns>
         public bool PrepareImageData() {
-            Bitmap colorBitmapImg = BitmapSourceToBitmap2(this.ImageSource as BitmapSource);
-            Bitmap depthBitmapImg = BitmapSourceToBitmap2(this.DepthSource as BitmapSource);
-            
-            ImageConverter converter = new ImageConverter();
-            this.colorData = (byte[])converter.ConvertTo(colorBitmapImg, typeof(byte[]));
-            this.depthData = (byte[])converter.ConvertTo(depthBitmapImg, typeof(byte[]));
+            WriteableBitmap colorBitmap = this.ImageSource as WriteableBitmap;
+            WriteableBitmap depthBitmap = this.DepthSource as WriteableBitmap;
+
+            this.colorData = new Byte[colorBitmap.PixelHeight * colorBitmap.PixelWidth * bgr32BytesPerPixel];
+            this.depthData = new Byte[depthBitmap.PixelHeight * depthBitmap.PixelWidth * gray8BytesPerPixel];
+
+            colorBitmap.CopyPixels(this.colorData, colorBitmap.BackBufferStride, 0);
+            depthBitmap.CopyPixels(this.depthData, depthBitmap.BackBufferStride, 0);
+
+            //Bitmap colorBitmapImg = BitmapSourceToBitmap2(this.ImageSource as BitmapSource);
+            //Bitmap depthBitmapImg = BitmapSourceToBitmap2(this.DepthSource as BitmapSource);
+
+            //this.colorData = ImageToByte2(colorBitmapImg);
+            //this.depthData = ImageToByte2(depthBitmapImg);
             float[] pointTemp = new float[1920 * 1080 * 3]; //3 dimension
 
             CameraSpacePoint[] cameraSpacePoints = new CameraSpacePoint[1920 * 1080];
@@ -175,6 +187,17 @@ namespace Kinect2.MultiKinects2BodyTracking.Client
             Buffer.BlockCopy(pointTemp, 0, depthPointsInColorCoordinate, 0, 1920 * 1080 * 3 * sizeof(float));
 
             return true;
+        }
+
+        public static byte[] ImageToByte2(System.Drawing.Image img) {
+            byte[] byteArray = new byte[0];
+            using (MemoryStream stream = new MemoryStream()) {
+                img.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                stream.Close();
+
+                byteArray = stream.ToArray();
+            }
+            return byteArray;
         }
 
         public static System.Drawing.Bitmap BitmapSourceToBitmap2(BitmapSource srs) {

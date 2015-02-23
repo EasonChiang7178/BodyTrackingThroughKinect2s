@@ -855,11 +855,9 @@ namespace Kinect2.MultiKinects2BodyTracking.Server {
 
             public void sendImageCommand()//object sender, RoutedEventArgs e)
             {
-
                 int action = (int)DownloadCommands.Get_all_kinect_images;
                 string datatosend = "d " + action.ToString() + " ";
                 sendData(datatosend);
-
             }
 
             #endregion // Methods

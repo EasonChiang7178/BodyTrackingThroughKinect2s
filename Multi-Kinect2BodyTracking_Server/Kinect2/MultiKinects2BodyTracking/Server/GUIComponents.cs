@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Media.Media3D;
@@ -608,8 +609,8 @@ namespace Kinect2.MultiKinects2BodyTracking.Server
             private const int gridColNum = 1;
             private int rowHeight = 25;
             Label titleLabel = new Label();
-            public Image rgbImg = new Image();
-            public Image depthImg = new Image();
+            public System.Windows.Controls.Image rgbImg = new System.Windows.Controls.Image();
+            public System.Windows.Controls.Image depthImg = new System.Windows.Controls.Image();
             public TextBlock infoTextBlock = new TextBlock();
             private const int WIDTH = 640;
             private const int HEIGHT = 480;
@@ -648,8 +649,8 @@ namespace Kinect2.MultiKinects2BodyTracking.Server
                 Grid.SetColumn(g, kinectIndex);
                 titleLabel.Content = "Kinect " + kinectIndex.ToString();
                 infoTextBlock.Text = "no data input";
-                colorImageWritableBitmap = new WriteableBitmap(WIDTH, HEIGHT, 96, 96, PixelFormats.Bgr32, null);
-                depthImageWritableBitmap = new WriteableBitmap(WIDTH, HEIGHT, 96, 96, PixelFormats.Gray16, null); //depth data is 320*240
+                colorImageWritableBitmap = new WriteableBitmap(1920, 1080, 96, 96, PixelFormats.Bgr32, null);
+                depthImageWritableBitmap = new WriteableBitmap(512, 424, 96, 96, PixelFormats.Gray8, null); //depth data is 320*240
                 arrangeComponents();
             }
 
@@ -661,7 +662,7 @@ namespace Kinect2.MultiKinects2BodyTracking.Server
             /// <param name="e"></param>
             public void addSynchy(object obj, System.Windows.Input.MouseButtonEventArgs e)
             {
-                Point p = e.GetPosition(rgbImg);
+                System.Windows.Point p = e.GetPosition(rgbImg);
 
                 int index = (int)(p.X * (WIDTH / rgbImg.Width) + p.Y * (WIDTH / rgbImg.Width) * WIDTH) * 3;
 
@@ -842,14 +843,27 @@ namespace Kinect2.MultiKinects2BodyTracking.Server
                             return;
                         }
 
-                        short[] depthData = new short[depthDataByte.Length / 2];
-                        Buffer.BlockCopy(depthDataByte, 0, depthData, 0, depthDataByte.Length);
+                        //System.Drawing.Bitmap colorBmp, depthBmp;
+                        //using (System.IO.MemoryStream ms = new System.IO.MemoryStream(rgbData)) {
+                        //    colorBmp = new System.Drawing.Bitmap(ms);
+                        //    ms.Close();
+                        //}
+                        //using (System.IO.MemoryStream ms = new System.IO.MemoryStream(depthDataByte)) {
+                        //    depthBmp = new System.Drawing.Bitmap(ms);
+                        //    ms.Close();
+                        //}
+
+                        //this.colorImageWritableBitmap = (WriteableBitmap)Imaging.CreateBitmapSourceFromBitmap(colorBmp);
+                        //this.depthImageWritableBitmap = (WriteableBitmap)Imaging.CreateBitmapSourceFromBitmap(depthBmp);
+
+                        //ushort[] depthData = new ushort[depthDataByte.Length / 2 + 1];
+                        //Buffer.BlockCopy(depthDataByte, 0, depthData, 0, depthDataByte.Length);
 
                         this.colorImageWritableBitmap.WritePixels(
-                            new Int32Rect(0, 0, WIDTH, HEIGHT), rgbData, WIDTH * Bgr32BytesPerPixel, 0);
+                            new Int32Rect(0, 0, 1920, 1080), rgbData, 7680, 0);
 
                         this.depthImageWritableBitmap.WritePixels(
-                            new Int32Rect(0, 0, WIDTH, HEIGHT), depthData, (WIDTH) * sizeof(short), 0);
+                            new Int32Rect(0, 0, 512, 424), depthDataByte, 512, 0);
 
                         this.rgbImg.Source = this.colorImageWritableBitmap;
                         this.depthImg.Source = this.depthImageWritableBitmap;

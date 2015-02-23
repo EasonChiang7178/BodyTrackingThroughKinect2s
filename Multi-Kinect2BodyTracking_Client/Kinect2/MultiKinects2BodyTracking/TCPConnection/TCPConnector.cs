@@ -98,7 +98,7 @@ namespace Kinect2.MultiKinects2BodyTracking.TCPConnection {
             string receivedData = "";
             try {
                 NetworkStream serverStream = readingSocket.GetStream();
-                serverStream.ReadTimeout = 10;
+                serverStream.ReadTimeout = 20;
 
                 //the loop should continue until no data available to read and message string is filled.
                 //if data is not available and message is empty then the loop should continue, until
